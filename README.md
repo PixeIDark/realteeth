@@ -1,73 +1,50 @@
-# React + TypeScript + Vite
+### 기술 스택
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+- React
+- React-Router-Dom
+- Vite
+- Tailwind
+- Tanstack Query
+- TS
 
-Currently, two official plugins are available:
+### 아키텍처
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- FSD
+    - 상위레이어에서 하위레이어로 의존하는 단방향 의존성을 지켜야한다
+    - api는 외부에 들어내지 않고 해당 레이어에 index.js로 정의
+    - 레이어 => 슬라이스 => 세그먼트
+    - **레이어 구조:**
+    - app: 앱의 시작점이나 주요 설정을 관리한다. 라우팅, 글로벌 스타일, 최상위 프로바이더 등을 포함. 슬라이어스가 없다.
+    - pages: 페이지 정의 및, UI/UX 렌더링
+    - widgets: 다수의 features, entities 를 포함해서 고수준의 UI 컴포넌트로 구성됨.
+    - features: 여러 page와 widgets에 재사용 가능한 추상화 레이어
+    - entities: 여러 page와 widgets에서 사용할 비즈니스 데이터와 로직을 다룬다.
+    - shared: 프로젝트 전반에서 재사용할 수 있는 유틸리티, 기본적인 컴포넌트, 스타일 등의 전반적인 리소스를 포함하는 레이어이다. 슬라이어스가 없다.
+    - **슬라이스**: 도메인별 분류. 슬라이스는 같은 레이어 안에서 다른 슬라이스를 참조할 수 없다.
 
-## React Compiler
+### 기능
 
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
+- 앱 첫 진입 시 사용자의 현재 위치를 감지하여 그 위치의 날씨 정보(현재 기온,당일의최저 기온, 당일의 최고 기온, 시간대 별 기온)를 보여주기
+- 유저가 원하는 장소를 검색(기초자치단체, 구, 동에 상관없이 검색 가능)하고 그 장소의날씨 정보를 조회
+    - e.g. “서울특별시”, “종로구”, “청운동” 등으로 시,군,구,동 모든단위로 검색 가능
+    - 검색어 입력 시 매칭되는 장소 리스트를 표시하고 사용자가 리스트에서 장소를 선택할 수 있다
+    - 해당 장소의 날씨 정보가 없는 경우 “해당 장소의 정보가 제공되지 않습니다.” 를 UI에 명시
+- 검색할 장소를 즐겨찾기에 추가하거나 삭제 가능
+    - 최대 6개의 장소를 추가할 수 있고, 카드 UI형태로 등록됨
+    - 추가된 장소의 이름 수정 가능
+    - 장소 카드는 날씨 정보를 보여줌
+    - 카드를 클릭하면 상세 페이지로 이동
 
-## Expanding the ESLint configuration
+### 페이지
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- 랜딩 페이지(”/”)
+    - 현재 위치를 감지
+    - 해당 위치 날씨 정보 렌더링
+    - 장소 검색 기능
+    - ⇒ 상세 페이지, 즐겨찾기 페이지
+- 상세 페이지(”/detail”)
+    - 검색한 장소에 해당하는 날씨 정보 렌더링
+    - ⇒ 랜딩 페이지, ?즐겨찾기 페이지
+- 즐겨찾기 페이지(”/favorite”)
+    - 장소 추가, 삭제, 수정
+    - ⇒ 상세 페이지, 랜딩 페이지
