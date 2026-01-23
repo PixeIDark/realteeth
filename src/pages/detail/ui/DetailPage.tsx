@@ -1,12 +1,10 @@
 import { useNavigate, useParams } from "react-router";
 import { districts } from "@/shared/data/koreaDistricts";
 import { useFavorites } from "@/features/manage-favorite";
-import { type HourlyForecast, useWeatherDetail } from "@/entities/weather";
+import { type HourlyForecast, useWeatherDetail, WeatherCard, WeatherLoading } from "@/entities/weather";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/Card.tsx";
 import { Button } from "@/shared/ui/Button.tsx";
-import { AlertCircle, ArrowLeft, Clock, Cloud, MapPin, Star, StarOff, Thermometer } from "lucide-react";
-import { WeatherLoading } from "@/entities/weather/ui/WeatherLoading.tsx";
-import React from "react";
+import { AlertCircle, ArrowLeft, Clock, MapPin, Star, StarOff } from "lucide-react";
 
 function DetailPage() {
   const { locationId } = useParams();
@@ -135,49 +133,13 @@ function DetailPage() {
         </Card>
 
         {/* 현재 날씨 카드 */}
-        <Card className="mb-6 sm:mb-8">
-          <CardHeader className="pb-2 sm:pb-4">
-            <CardTitle className="flex items-center gap-2 text-base sm:text-xl">
-              <Cloud className="h-4 w-4 text-sky-500 sm:h-5 sm:w-5" />
-              현재 날씨
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="bg-muted/50 flex items-center gap-3 rounded-lg p-4 sm:p-5">
-                <Thermometer className="h-6 w-6 text-orange-500 sm:h-8 sm:w-8" />
-                <div>
-                  <p className="text-muted-foreground text-xs sm:text-sm">현재 기온</p>
-                  <p className="text-2xl font-bold sm:text-3xl">{weather?.main?.temp}°C</p>
-                </div>
-              </div>
-
-              <div className="bg-muted/50 flex items-center gap-3 rounded-lg p-4 sm:p-5">
-                <Thermometer className="h-6 w-6 text-blue-500 sm:h-8 sm:w-8" />
-                <div>
-                  <p className="text-muted-foreground text-xs sm:text-sm">최저 기온</p>
-                  <p className="text-2xl font-bold sm:text-3xl">{weather?.main?.temp_min}°C</p>
-                </div>
-              </div>
-
-              <div className="bg-muted/50 flex items-center gap-3 rounded-lg p-4 sm:p-5">
-                <Thermometer className="h-6 w-6 text-red-500 sm:h-8 sm:w-8" />
-                <div>
-                  <p className="text-muted-foreground text-xs sm:text-sm">최고 기온</p>
-                  <p className="text-2xl font-bold sm:text-3xl">{weather?.main?.temp_max}°C</p>
-                </div>
-              </div>
-
-              <div className="bg-muted/50 flex items-center gap-3 rounded-lg p-4 sm:p-5">
-                <Cloud className="h-6 w-6 text-sky-500 sm:h-8 sm:w-8" />
-                <div>
-                  <p className="text-muted-foreground text-xs sm:text-sm">날씨</p>
-                  <p className="text-xl font-bold capitalize sm:text-2xl">{weather?.weather?.[0]?.description}</p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <WeatherCard
+          name={weather?.name || "-"}
+          temp={weather?.main?.temp}
+          tempMin={weather?.main?.temp_min}
+          tempMax={weather?.main?.temp_max}
+          description={weather?.weather?.[0]?.description || "정보 없음"}
+        />
 
         {/* 시간대별 기온 카드 */}
         <Card>

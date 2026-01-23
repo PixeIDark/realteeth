@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { useCurrentWeather } from "@/entities/weather";
 import { LINKS } from "@/app/routes/route";
 import type { Favorite } from "@/shared/types/favorite";
 import { Card, CardContent, CardHeader } from "@/shared/ui/Card.tsx";
 import { Button } from "@/shared/ui/Button.tsx";
 import { Input } from "@/shared/ui/Input.tsx";
 import { Check, Cloud, Loader2, Pencil, Trash2, X } from "lucide-react";
+import { useCurrentWeather } from "@/entities/weather/model/queries.ts";
 
 interface FavoriteCardProps {
   favorite: Favorite;
