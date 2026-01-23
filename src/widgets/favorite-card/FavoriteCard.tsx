@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router";
-import { ENV } from "@/shared/config/env.ts";
-import { LINKS } from "@/app/routes/route.ts";
-import type { Favorite } from "@/shared/types/favorite.ts";
-import { Card, CardContent, CardHeader } from "@/shared/ui/card";
-import { Button } from "@/shared/ui/button";
-import { Input } from "@/shared/ui/input";
+import { useCurrentWeather } from "@/entities/weather";
+import { LINKS } from "@/app/routes/route";
+import type { Favorite } from "@/shared/types/favorite";
+import { Card, CardContent, CardHeader } from "@/shared/ui/Card.tsx";
+import { Button } from "@/shared/ui/Button.tsx";
+import { Input } from "@/shared/ui/Input.tsx";
 import { Check, Cloud, Loader2, Pencil, Trash2, X } from "lucide-react";
 
 interface FavoriteCardProps {
@@ -16,25 +16,9 @@ interface FavoriteCardProps {
 
 function FavoriteCard({ favorite, onRemove, onUpdateAlias }: FavoriteCardProps) {
   const navigate = useNavigate();
-  const [weather, setWeather] = useState<any>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [alias, setAlias] = useState(favorite.alias);
-
-  useEffect(() => {
-    const fetchWeather = async () => {
-      try {
-        const response = await fetch(
-          `${ENV.WEATHER_BASE_URL}/weather?lat=${favorite.lat}&lon=${favorite.lon}&appid=${ENV.WEATHER_API_KEY}&units=metric&lang=kr`
-        );
-        const data = await response.json();
-        setWeather(data);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
-    fetchWeather();
-  }, [favorite.lat, favorite.lon]);
+  const { data: weather, isLoading } = useCurrentWeather(favorite.lat, favorite.lon);
 
   const handleCardClick = () => {
     if (!isEditing) {
@@ -95,7 +79,12 @@ function FavoriteCard({ favorite, onRemove, onUpdateAlias }: FavoriteCardProps) 
       </CardHeader>
 
       <CardContent className="space-y-2 sm:space-y-3">
-        {weather ? (
+        {isLoading ? (
+          <div className="text-muted-foreground flex items-center gap-2 py-2 sm:py-4">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            <span className="text-xs sm:text-sm">날씨 로딩 중...</span>
+          </div>
+        ) : weather ? (
           <div className="space-y-1.5 sm:space-y-2">
             <div className="flex items-center gap-2">
               <Cloud className="text-muted-foreground h-4 w-4 sm:h-5 sm:w-5" />
@@ -107,12 +96,7 @@ function FavoriteCard({ favorite, onRemove, onUpdateAlias }: FavoriteCardProps) 
             </div>
             <p className="text-muted-foreground text-xs capitalize sm:text-sm">{weather.weather?.[0]?.description}</p>
           </div>
-        ) : (
-          <div className="text-muted-foreground flex items-center gap-2 py-2 sm:py-4">
-            <Loader2 className="h-4 w-4 animate-spin" />
-            <span className="text-xs sm:text-sm">날씨 로딩 중...</span>
-          </div>
-        )}
+        ) : null}
 
         <Button
           variant="destructive"
