@@ -94,68 +94,66 @@ function DetailPage() {
   const hourlyForecast = forecast.data ?? [];
 
   return (
-    <div className="bg-background min-h-screen">
-      <div className="mx-auto max-w-2xl px-4 py-4 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
-        {/* 헤더 */}
-        <div className="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-center sm:justify-between">
-          <Button variant="ghost" onClick={() => navigate(-1)} className="w-fit">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            뒤로가기
-          </Button>
+    <div>
+      {/* 헤더 */}
+      <div className="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-center sm:justify-between">
+        <Button variant="ghost" onClick={() => navigate(-1)} className="w-fit">
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          뒤로가기
+        </Button>
 
-          <Button
-            variant={isCurrentFavorite ? "outline" : "default"}
-            onClick={handleToggleFavorite}
-            className="w-full sm:w-auto"
-          >
-            {isCurrentFavorite ? (
-              <>
-                <StarOff className="mr-2 h-4 w-4" />
-                즐겨찾기 해제
-              </>
-            ) : (
-              <>
-                <Star className="mr-2 h-4 w-4" />
-                즐겨찾기 추가
-              </>
-            )}
-          </Button>
-        </div>
-
-        {/* 현재 날씨 카드 */}
-        <WeatherCard
-          name={weather?.name || "-"}
-          temp={weather?.main?.temp}
-          tempMin={weather?.main?.temp_min}
-          tempMax={weather?.main?.temp_max}
-          description={weather?.weather?.[0]?.description || "정보 없음"}
-        />
-
-        {/* 시간대별 기온 카드 */}
-        <Card>
-          <CardHeader className="pb-2 sm:pb-4">
-            <CardTitle className="flex items-center gap-2 text-base sm:text-xl">
-              <Clock className="h-4 w-4 text-violet-500 sm:h-5 sm:w-5" />
-              시간대별 기온
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex gap-3 overflow-x-auto pb-2">
-              {hourlyForecast.map((item: HourlyForecast) => (
-                <div
-                  key={item.dt}
-                  className="bg-muted/50 flex min-w-[100px] flex-col items-center gap-2 rounded-lg p-3 sm:min-w-[120px] sm:p-4"
-                >
-                  <p className="text-muted-foreground text-xs">{formatDate(item.dt_txt)}</p>
-                  <p className="text-sm font-medium">{formatTime(item.dt_txt)}</p>
-                  <p className="text-lg font-bold sm:text-xl">{Math.round(item.main.temp)}°C</p>
-                  <p className="text-muted-foreground text-center text-xs">{item.weather[0]?.description}</p>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+        <Button
+          variant={isCurrentFavorite ? "outline" : "default"}
+          onClick={handleToggleFavorite}
+          className="w-full sm:w-auto"
+        >
+          {isCurrentFavorite ? (
+            <>
+              <StarOff className="mr-2 h-4 w-4" />
+              즐겨찾기 해제
+            </>
+          ) : (
+            <>
+              <Star className="mr-2 h-4 w-4" />
+              즐겨찾기 추가
+            </>
+          )}
+        </Button>
       </div>
+
+      {/* 현재 날씨 카드 */}
+      <WeatherCard
+        name={weather?.name || "-"}
+        temp={weather?.main?.temp}
+        tempMin={weather?.main?.temp_min}
+        tempMax={weather?.main?.temp_max}
+        description={weather?.weather?.[0]?.description || "정보 없음"}
+      />
+
+      {/* 시간대별 기온 카드 */}
+      <Card>
+        <CardHeader className="pb-2 sm:pb-4">
+          <CardTitle className="flex items-center gap-2 text-base sm:text-xl">
+            <Clock className="h-4 w-4 text-violet-500 sm:h-5 sm:w-5" />
+            시간대별 기온
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex gap-3 overflow-x-auto pb-2">
+            {hourlyForecast.map((item: HourlyForecast) => (
+              <div
+                key={item.dt}
+                className="bg-muted/50 flex min-w-[100px] flex-col items-center gap-2 rounded-lg p-3 sm:min-w-[120px] sm:p-4"
+              >
+                <p className="text-muted-foreground text-xs">{formatDate(item.dt_txt)}</p>
+                <p className="text-sm font-medium">{formatTime(item.dt_txt)}</p>
+                <p className="text-lg font-bold sm:text-xl">{Math.round(item.main.temp)}°C</p>
+                <p className="text-muted-foreground text-center text-xs">{item.weather[0]?.description}</p>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
