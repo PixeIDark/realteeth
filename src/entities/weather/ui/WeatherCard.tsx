@@ -3,9 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/Card";
 
 interface WeatherCardProps {
   name: string;
-  temp: number;
-  tempMin: number;
-  tempMax: number;
+  temp: string;
+  tempMin: string;
+  tempMax: string;
   description: string;
 }
 
@@ -24,7 +24,7 @@ function WeatherCard({ name, temp, tempMin, tempMax, description }: WeatherCardP
             <MapPin className="text-muted-foreground h-5 w-5 sm:h-6 sm:w-6" />
             <div>
               <p className="text-muted-foreground text-xs sm:text-sm">도시</p>
-              <p className="text-sm font-semibold sm:text-lg">{name || "-"}</p>
+              <p className="text-sm font-semibold sm:text-lg">{name}</p>
             </div>
           </div>
 
@@ -32,7 +32,7 @@ function WeatherCard({ name, temp, tempMin, tempMax, description }: WeatherCardP
             <Thermometer className="h-5 w-5 text-orange-500 sm:h-6 sm:w-6" />
             <div>
               <p className="text-muted-foreground text-xs sm:text-sm">현재 기온</p>
-              <p className="text-sm font-semibold sm:text-lg">{temp}°C</p>
+              <p className="text-sm font-semibold sm:text-lg">{temp}</p>
             </div>
           </div>
 
@@ -41,7 +41,7 @@ function WeatherCard({ name, temp, tempMin, tempMax, description }: WeatherCardP
             <div>
               <p className="text-muted-foreground text-xs sm:text-sm">최저 / 최고</p>
               <p className="text-sm font-semibold sm:text-lg">
-                {tempMin}°C / {tempMax}°C
+                {tempMin} / {tempMax}
               </p>
             </div>
           </div>

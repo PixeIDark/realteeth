@@ -12,6 +12,6 @@ export const formatShortDate = (dateString: string) => {
   return date.toLocaleDateString("ko-KR", { month: "short", day: "numeric" });
 };
 
-export const formatString = (value: string | undefined): string => {
-  return value ?? "";
+export const formatString = (value: string | undefined, fallback: string = ""): string => {
+  return value ?? fallback;
 };

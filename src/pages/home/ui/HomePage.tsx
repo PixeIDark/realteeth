@@ -1,8 +1,10 @@
 import { useCurrentLocation } from "@/features/get-current-location";
 import { HourlyForecastCard, useWeatherDetail, WeatherCard, WeatherLoading } from "@/entities/weather";
+import { formatTemp } from "@/entities/weather/lib/formatWeather.ts";
 import { DistrictSearchBox } from "@/widgets/district-search-box";
 import { FavoriteList } from "@/widgets/favorite-list";
 import ErrorCard from "@/shared/ui/ErrorCard.tsx";
+import { formatString } from "@/shared/lib/formater.ts";
 
 function HomePage() {
   const { location } = useCurrentLocation();
@@ -19,16 +21,16 @@ function HomePage() {
   const weather = currentWeather.data;
   const hourlyForecast = forecast.data ?? [];
 
+  const name = formatString(weather?.name) || "-";
+  const temp = formatTemp(weather?.main?.temp);
+  const tempMin = formatTemp(weather?.main?.temp_min);
+  const tempMax = formatTemp(weather?.main?.temp_max);
+  const description = formatString(weather?.weather?.[0]?.description) || "정보 없음";
+
   return (
     <div>
       <DistrictSearchBox />
-      <WeatherCard
-        name={weather?.name || "-"}
-        temp={weather?.main?.temp}
-        tempMin={weather?.main?.temp_min}
-        tempMax={weather?.main?.temp_max}
-        description={weather?.weather?.[0]?.description || "정보 없음"}
-      />
+      <WeatherCard name={name} temp={temp} tempMin={tempMin} tempMax={tempMax} description={description} />
       <HourlyForecastCard forecast={hourlyForecast} />
       <FavoriteList />
     </div>
