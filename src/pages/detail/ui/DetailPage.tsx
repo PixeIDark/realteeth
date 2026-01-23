@@ -4,7 +4,7 @@ import { useFavorites } from "../../../features/favorite";
 import { type HourlyForecast, useWeatherDetail, WeatherCard, WeatherLoading } from "@/entities/weather";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/Card.tsx";
 import { Button } from "@/shared/ui/Button.tsx";
-import { AlertCircle, ArrowLeft, Clock, MapPin, Star, StarOff } from "lucide-react";
+import { AlertCircle, ArrowLeft, Clock, Star, StarOff } from "lucide-react";
 
 function DetailPage() {
   const { locationId } = useParams();
@@ -121,16 +121,6 @@ function DetailPage() {
             )}
           </Button>
         </div>
-
-        {/* 위치 정보 카드 */}
-        <Card className="mb-6 sm:mb-8">
-          <CardHeader className="pb-2 sm:pb-4">
-            <CardTitle className="flex items-center gap-2 text-lg sm:text-2xl">
-              <MapPin className="text-primary h-5 w-5 sm:h-6 sm:w-6" />
-              <span className="text-balance">{district.fullName}</span>
-            </CardTitle>
-          </CardHeader>
-        </Card>
 
         {/* 현재 날씨 카드 */}
         <WeatherCard
