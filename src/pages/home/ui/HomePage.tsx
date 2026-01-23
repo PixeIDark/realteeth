@@ -2,79 +2,33 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useCurrentLocation } from "@/features/get-current-location";
 import { useFavorites } from "@/features/manage-favorite";
-import { ENV } from "@/shared/config/env.ts";
-import { type District, districts } from "@/shared/data/koreaDistricts.ts";
-import { LINKS } from "@/app/routes/route.ts";
-import { FavoriteCard } from "../../../widgets/favorite-card";
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
-import { Input } from "@/shared/ui/input";
-import { Button } from "@/shared/ui/button";
-import { AlertCircle, Clock, Cloud, Loader2, MapPin, Search, Star, Thermometer } from "lucide-react";
-
-interface HourlyForecast {
-  dt: number;
-  dt_txt: string;
-  main: {
-    temp: number;
-    temp_min: number;
-    temp_max: number;
-  };
-  weather: {
-    description: string;
-    icon: string;
-  }[];
-}
+import { type HourlyForecast, useWeatherDetail } from "@/entities/weather";
+import { type District, districts } from "@/shared/data/koreaDistricts";
+import { LINKS } from "@/app/routes/route";
+import { FavoriteCard } from "@/widgets/favorite-card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/Card.tsx";
+import { Input } from "@/shared/ui/Input.tsx";
+import { Button } from "@/shared/ui/Button.tsx";
+import { AlertCircle, Clock, Cloud, MapPin, Search, Star, Thermometer } from "lucide-react";
+import { WeatherLoading } from "@/entities/weather/ui/WeatherLoading.tsx";
 
 function HomePage() {
   const navigate = useNavigate();
-  const [weather, setWeather] = useState<any>(null);
-  const [hourlyForecast, setHourlyForecast] = useState<HourlyForecast[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [searchResults, setSearchResults] = useState<District[]>([]);
   const [noResults, setNoResults] = useState(false);
   const [focusIndex, setFocusIndex] = useState(-1);
+
   const { location } = useCurrentLocation();
   const { favorites, addFavorite, removeFavorite, updateAlias } = useFavorites();
 
-  useEffect(() => {
-    if (!location) return;
+  const { currentWeather, forecast, isLoading, isError, error } = useWeatherDetail(
+    location?.lat ?? 0,
+    location?.lon ?? 0,
+    !!location
+  );
 
-    const fetchWeatherData = async () => {
-      try {
-        // 현재 날씨
-        const currentRes = await fetch(
-          `${ENV.WEATHER_BASE_URL}/weather?lat=${location.lat}&lon=${location.lon}&appid=${ENV.WEATHER_API_KEY}&units=metric&lang=kr`
-        );
-        if (!currentRes.ok) throw new Error(`HTTP error! status: ${currentRes.status}`);
-        const currentData = await currentRes.json();
-        setWeather(currentData);
-
-        // 시간대별 예보
-        const forecastRes = await fetch(
-          `${ENV.WEATHER_BASE_URL}/forecast?lat=${location.lat}&lon=${location.lon}&appid=${ENV.WEATHER_API_KEY}&units=metric&lang=kr`
-        );
-        if (!forecastRes.ok) throw new Error(`HTTP error! status: ${forecastRes.status}`);
-        const forecastData = await forecastRes.json();
-
-        // 오늘 날짜의 데이터 필터링 (최대 8개 = 24시간)
-        const today = new Date().toISOString().split("T")[0];
-        const todayForecast = forecastData.list.filter((item: HourlyForecast) => item.dt_txt.startsWith(today));
-
-        const forecast = todayForecast.length >= 4 ? todayForecast : forecastData.list.slice(0, 8);
-
-        setHourlyForecast(forecast);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "알 수 없는 에러");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchWeatherData();
-  }, [location]);
-
+  // 검색 디바운스
   useEffect(() => {
     if (!query.trim()) {
       setSearchResults([]);
@@ -139,7 +93,11 @@ function HomePage() {
 
   const formatTime = (dtTxt: string) => {
     const date = new Date(dtTxt);
-    return date.toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit", hour12: false });
+    return date.toLocaleTimeString("ko-KR", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    });
   };
 
   const formatDate = (dtTxt: string) => {
@@ -147,29 +105,27 @@ function HomePage() {
     return date.toLocaleDateString("ko-KR", { month: "short", day: "numeric" });
   };
 
-  if (loading) {
-    return (
-      <div className="bg-background flex min-h-screen items-center justify-center">
-        <div className="flex flex-col items-center gap-3">
-          <Loader2 className="text-primary h-8 w-8 animate-spin" />
-          <p className="text-muted-foreground text-sm">날씨 정보를 불러오는 중...</p>
-        </div>
-      </div>
-    );
+  if (isLoading) {
+    return <WeatherLoading />;
   }
 
-  if (error) {
+  if (isError) {
     return (
       <div className="bg-background flex min-h-screen items-center justify-center px-4">
         <Card className="w-full max-w-md">
           <CardContent className="flex flex-col items-center gap-3 pt-6">
             <AlertCircle className="text-destructive h-10 w-10" />
-            <p className="text-muted-foreground text-center text-sm">에러: {error}</p>
+            <p className="text-muted-foreground text-center text-sm">
+              에러: {error instanceof Error ? error.message : "알 수 없는 에러"}
+            </p>
           </CardContent>
         </Card>
       </div>
     );
   }
+
+  const weather = currentWeather.data;
+  const hourlyForecast = forecast.data ?? [];
 
   return (
     <div className="bg-background min-h-screen">
@@ -290,15 +246,15 @@ function HomePage() {
           </CardHeader>
           <CardContent>
             <div className="flex gap-3 overflow-x-auto pb-2">
-              {hourlyForecast.map((forecast) => (
+              {hourlyForecast.map((item: HourlyForecast) => (
                 <div
-                  key={forecast.dt}
+                  key={item.dt}
                   className="bg-muted/50 flex min-w-[100px] flex-col items-center gap-2 rounded-lg p-3 sm:min-w-[120px] sm:p-4"
                 >
-                  <p className="text-muted-foreground text-xs">{formatDate(forecast.dt_txt)}</p>
-                  <p className="text-sm font-medium">{formatTime(forecast.dt_txt)}</p>
-                  <p className="text-lg font-bold sm:text-xl">{Math.round(forecast.main.temp)}°C</p>
-                  <p className="text-muted-foreground text-center text-xs">{forecast.weather[0]?.description}</p>
+                  <p className="text-muted-foreground text-xs">{formatDate(item.dt_txt)}</p>
+                  <p className="text-sm font-medium">{formatTime(item.dt_txt)}</p>
+                  <p className="text-lg font-bold sm:text-xl">{Math.round(item.main.temp)}°C</p>
+                  <p className="text-muted-foreground text-center text-xs">{item.weather[0]?.description}</p>
                 </div>
               ))}
             </div>

@@ -1,80 +1,27 @@
 import { useNavigate, useParams } from "react-router";
-import { useEffect, useState } from "react";
-import { districts } from "@/shared/data/koreaDistricts.ts";
-import { ENV } from "@/shared/config/env.ts";
+import { districts } from "@/shared/data/koreaDistricts";
 import { useFavorites } from "@/features/manage-favorite";
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
-import { Button } from "@/shared/ui/button";
-import { AlertCircle, ArrowLeft, Clock, Cloud, Loader2, MapPin, Star, StarOff, Thermometer } from "lucide-react";
-
-interface HourlyForecast {
-  dt: number;
-  dt_txt: string;
-  main: {
-    temp: number;
-    temp_min: number;
-    temp_max: number;
-  };
-  weather: {
-    description: string;
-    icon: string;
-  }[];
-}
+import { type HourlyForecast, useWeatherDetail } from "@/entities/weather";
+import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/Card.tsx";
+import { Button } from "@/shared/ui/Button.tsx";
+import { AlertCircle, ArrowLeft, Clock, Cloud, MapPin, Star, StarOff, Thermometer } from "lucide-react";
+import { WeatherLoading } from "@/entities/weather/ui/WeatherLoading.tsx";
+import React from "react";
 
 function DetailPage() {
   const { locationId } = useParams();
   const navigate = useNavigate();
-  const [weather, setWeather] = useState<any>(null);
-  const [hourlyForecast, setHourlyForecast] = useState<HourlyForecast[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const { addFavorite, removeFavorite, isFavorite, favorites } = useFavorites();
 
   const district = districts.find((d) => d.id === locationId);
   const favoriteItem = favorites.find((f) => f.districtId === locationId);
   const isCurrentFavorite = isFavorite(locationId || "");
 
-  useEffect(() => {
-    if (!district) {
-      setError("해당 장소의 정보가 제공되지 않습니다.");
-      setLoading(false);
-      return;
-    }
-
-    const fetchWeatherData = async () => {
-      try {
-        // 현재 날씨
-        const currentRes = await fetch(
-          `${ENV.WEATHER_BASE_URL}/weather?lat=${district.lat}&lon=${district.lon}&appid=${ENV.WEATHER_API_KEY}&units=metric&lang=kr`
-        );
-        if (!currentRes.ok) throw new Error(`HTTP error! status: ${currentRes.status}`);
-        const currentData = await currentRes.json();
-        setWeather(currentData);
-
-        // 시간대별 예보
-        const forecastRes = await fetch(
-          `${ENV.WEATHER_BASE_URL}/forecast?lat=${district.lat}&lon=${district.lon}&appid=${ENV.WEATHER_API_KEY}&units=metric&lang=kr`
-        );
-        if (!forecastRes.ok) throw new Error(`HTTP error! status: ${forecastRes.status}`);
-        const forecastData = await forecastRes.json();
-
-        // 오늘 날짜의 데이터만 필터링 (최대 8개 = 24시간)
-        const today = new Date().toISOString().split("T")[0];
-        const todayForecast = forecastData.list.filter((item: HourlyForecast) => item.dt_txt.startsWith(today));
-
-        // 오늘 데이터가 적으면 내일까지 포함해서 8개
-        const forecast = todayForecast.length >= 4 ? todayForecast : forecastData.list.slice(0, 8);
-
-        setHourlyForecast(forecast);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "알 수 없는 에러");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchWeatherData();
-  }, [district]);
+  const { currentWeather, forecast, isLoading, isError, error } = useWeatherDetail(
+    district?.lat ?? 0,
+    district?.lon ?? 0,
+    !!district
+  );
 
   const handleToggleFavorite = () => {
     if (!district) return;
@@ -93,7 +40,11 @@ function DetailPage() {
 
   const formatTime = (dtTxt: string) => {
     const date = new Date(dtTxt);
-    return date.toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit", hour12: false });
+    return date.toLocaleTimeString("ko-KR", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    });
   };
 
   const formatDate = (dtTxt: string) => {
@@ -101,24 +52,13 @@ function DetailPage() {
     return date.toLocaleDateString("ko-KR", { month: "short", day: "numeric" });
   };
 
-  if (loading) {
-    return (
-      <div className="bg-background flex min-h-screen items-center justify-center">
-        <div className="flex flex-col items-center gap-3">
-          <Loader2 className="text-primary h-8 w-8 animate-spin" />
-          <p className="text-muted-foreground text-sm">날씨 정보를 불러오는 중...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
+  if (!district) {
     return (
       <div className="bg-background flex min-h-screen items-center justify-center px-4">
         <Card className="w-full max-w-md">
           <CardContent className="flex flex-col items-center gap-4 pt-6">
             <AlertCircle className="text-destructive h-10 w-10" />
-            <p className="text-muted-foreground text-center text-sm">{error}</p>
+            <p className="text-muted-foreground text-center text-sm">해당 장소의 정보가 제공되지 않습니다.</p>
             <Button variant="outline" onClick={() => navigate(-1)}>
               <ArrowLeft className="mr-2 h-4 w-4" />
               뒤로가기
@@ -128,6 +68,32 @@ function DetailPage() {
       </div>
     );
   }
+
+  if (isLoading) {
+    return <WeatherLoading />;
+  }
+
+  if (isError) {
+    return (
+      <div className="bg-background flex min-h-screen items-center justify-center px-4">
+        <Card className="w-full max-w-md">
+          <CardContent className="flex flex-col items-center gap-4 pt-6">
+            <AlertCircle className="text-destructive h-10 w-10" />
+            <p className="text-muted-foreground text-center text-sm">
+              {error instanceof Error ? error.message : "알 수 없는 에러"}
+            </p>
+            <Button variant="outline" onClick={() => navigate(-1)}>
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              뒤로가기
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  const weather = currentWeather.data;
+  const hourlyForecast = forecast.data ?? [];
 
   return (
     <div className="bg-background min-h-screen">
@@ -163,7 +129,7 @@ function DetailPage() {
           <CardHeader className="pb-2 sm:pb-4">
             <CardTitle className="flex items-center gap-2 text-lg sm:text-2xl">
               <MapPin className="text-primary h-5 w-5 sm:h-6 sm:w-6" />
-              <span className="text-balance">{district?.fullName}</span>
+              <span className="text-balance">{district.fullName}</span>
             </CardTitle>
           </CardHeader>
         </Card>
@@ -223,15 +189,15 @@ function DetailPage() {
           </CardHeader>
           <CardContent>
             <div className="flex gap-3 overflow-x-auto pb-2">
-              {hourlyForecast.map((forecast) => (
+              {hourlyForecast.map((item: HourlyForecast) => (
                 <div
-                  key={forecast.dt}
+                  key={item.dt}
                   className="bg-muted/50 flex min-w-[100px] flex-col items-center gap-2 rounded-lg p-3 sm:min-w-[120px] sm:p-4"
                 >
-                  <p className="text-muted-foreground text-xs">{formatDate(forecast.dt_txt)}</p>
-                  <p className="text-sm font-medium">{formatTime(forecast.dt_txt)}</p>
-                  <p className="text-lg font-bold sm:text-xl">{Math.round(forecast.main.temp)}°C</p>
-                  <p className="text-muted-foreground text-center text-xs">{forecast.weather[0]?.description}</p>
+                  <p className="text-muted-foreground text-xs">{formatDate(item.dt_txt)}</p>
+                  <p className="text-sm font-medium">{formatTime(item.dt_txt)}</p>
+                  <p className="text-lg font-bold sm:text-xl">{Math.round(item.main.temp)}°C</p>
+                  <p className="text-muted-foreground text-center text-xs">{item.weather[0]?.description}</p>
                 </div>
               ))}
             </div>
