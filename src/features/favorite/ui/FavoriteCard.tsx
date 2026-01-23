@@ -4,9 +4,12 @@ import { LINKS } from "@/app/routes/route.ts";
 import { Card, CardContent, CardHeader } from "@/shared/ui/Card.tsx";
 import { Button } from "@/shared/ui/Button.tsx";
 import { Input } from "@/shared/ui/Input.tsx";
-import { Check, Cloud, Loader2, Pencil, Trash2, X } from "lucide-react";
+import { Check, Cloud, Pencil, Trash2, X } from "lucide-react";
 import { useCurrentWeather } from "@/entities/weather/model/queries.ts";
 import type { FavoriteItem } from "@/entities/favorite/model/types.ts";
+import ItemLoader from "@/shared/ui/ItemLoader.tsx";
+import { formatTemp } from "@/entities/weather/lib/formatWeather.ts";
+import { formatString } from "@/shared/lib/formater.ts";
 
 interface FavoriteCardProps {
   favorite: FavoriteItem;
@@ -19,6 +22,11 @@ function FavoriteCard({ favorite, onRemove, onUpdateAlias }: FavoriteCardProps) 
   const [isEditing, setIsEditing] = useState(false);
   const [alias, setAlias] = useState(favorite.alias);
   const { data: weather, isLoading } = useCurrentWeather(favorite.lat, favorite.lon);
+
+  const temp = formatTemp(weather?.main?.temp);
+  const tempMin = formatTemp(weather?.main?.temp_min);
+  const tempMax = formatTemp(weather?.main?.temp_max);
+  const description = formatString(weather?.weather[0]?.description);
 
   const handleCardClick = () => {
     if (!isEditing) {
@@ -80,21 +88,18 @@ function FavoriteCard({ favorite, onRemove, onUpdateAlias }: FavoriteCardProps) 
 
       <CardContent className="space-y-2 sm:space-y-3">
         {isLoading ? (
-          <div className="text-muted-foreground flex items-center gap-2 py-2 sm:py-4">
-            <Loader2 className="h-4 w-4 animate-spin" />
-            <span className="text-xs sm:text-sm">날씨 로딩 중...</span>
-          </div>
+          <ItemLoader text={"날씨 로딩 중..."} />
         ) : weather ? (
           <div className="space-y-1.5 sm:space-y-2">
             <div className="flex items-center gap-2">
               <Cloud className="text-muted-foreground h-4 w-4 sm:h-5 sm:w-5" />
-              <span className="text-xl font-bold sm:text-2xl">{weather.main?.temp}°C</span>
+              <span className="text-xl font-bold sm:text-2xl">{temp}</span>
             </div>
             <div className="text-muted-foreground flex flex-wrap gap-x-3 gap-y-1 text-xs sm:text-sm">
-              <span>최저 {weather.main?.temp_min}°C</span>
-              <span>최고 {weather.main?.temp_max}°C</span>
+              <span>최저 {tempMin}</span>
+              <span>최고 {tempMax}</span>
             </div>
-            <p className="text-muted-foreground text-xs capitalize sm:text-sm">{weather.weather?.[0]?.description}</p>
+            <p className="text-muted-foreground text-xs capitalize sm:text-sm">{description}</p>
           </div>
         ) : null}
 

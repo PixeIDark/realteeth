@@ -1,3 +1,10 @@
+export interface WeatherData {
+  temp: number;
+  tempMin: number;
+  tempMax: number;
+  description: string;
+}
+
 export interface CurrentWeatherResponse {
   main: {
     temp: number;

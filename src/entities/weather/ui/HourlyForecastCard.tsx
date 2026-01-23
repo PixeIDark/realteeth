@@ -1,7 +1,7 @@
 import type { HourlyForecast } from "../model/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/Card";
 import { Clock } from "lucide-react";
-import { formatShortDate, formatTime } from "@/shared/lib/formatDate.ts";
+import { formatShortDate, formatTime } from "@/shared/lib/formater.ts";
 
 interface HourlyForecastCardProps {
   forecast: HourlyForecast[];

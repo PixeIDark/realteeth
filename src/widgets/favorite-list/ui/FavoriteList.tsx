@@ -1,7 +1,6 @@
-import { useFavorites } from "../../../features/favorite";
-import { FavoriteCard } from "@/entities/favorite";
 import { Card, CardContent } from "@/shared/ui/Card";
 import { Star } from "lucide-react";
+import { FavoriteCard, useFavorites } from "@/features/favorite";
 
 function FavoriteList() {
   const { favorites, removeFavorite, updateAlias } = useFavorites();
