@@ -21,14 +21,14 @@ function HomePage() {
   const weather = currentWeather.data;
   const hourlyForecast = forecast.data ?? [];
 
-  const name = formatString(weather?.name) || "-";
+  const name = formatString(weather?.name, "-");
   const temp = formatTemp(weather?.main?.temp);
   const tempMin = formatTemp(weather?.main?.temp_min);
   const tempMax = formatTemp(weather?.main?.temp_max);
-  const description = formatString(weather?.weather?.[0]?.description) || "정보 없음";
+  const description = formatString(weather?.weather?.[0]?.description, "정보 없음");
 
   return (
-    <div>
+    <div className="mb-6 flex flex-col gap-6 sm:gap-8">
       <DistrictSearchBox />
       <WeatherCard name={name} temp={temp} tempMin={tempMin} tempMax={tempMax} description={description} />
       <HourlyForecastCard forecast={hourlyForecast} />

@@ -9,8 +9,8 @@ interface HourlyForecastCardProps {
 
 function HourlyForecastCard({ forecast }: HourlyForecastCardProps) {
   return (
-    <Card className="mb-6 sm:mb-8">
-      <CardHeader className="pb-2 sm:pb-4">
+    <Card className="overflow-hidden">
+      <CardHeader>
         <CardTitle className="flex items-center gap-2 text-base sm:text-xl">
           <Clock className="h-4 w-4 text-violet-500 sm:h-5 sm:w-5" />
           시간대별 기온

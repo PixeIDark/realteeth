@@ -7,7 +7,7 @@ function FavoriteList() {
 
   return (
     <Card>
-      <CardHeader className="pb-2 sm:pb-4">
+      <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <span className="flex items-center gap-2 text-base sm:text-xl">
             <Star className="h-4 w-4 text-yellow-500 sm:h-5 sm:w-5" />

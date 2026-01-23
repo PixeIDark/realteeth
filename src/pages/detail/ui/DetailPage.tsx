@@ -1,10 +1,13 @@
 import { useNavigate, useParams } from "react-router";
 import { districts } from "@/shared/data/koreaDistricts";
-import { useFavorites } from "../../../features/favorite";
-import { type HourlyForecast, useWeatherDetail, WeatherCard, WeatherLoading } from "@/entities/weather";
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/Card.tsx";
+import { useFavorites } from "@/features/favorite";
+import { HourlyForecastCard, useWeatherDetail, WeatherCard, WeatherLoading } from "@/entities/weather";
+import { formatTemp } from "@/entities/weather/lib/formatWeather.ts";
+import { formatString } from "@/shared/lib/formater.ts";
+import { Card, CardContent } from "@/shared/ui/Card.tsx";
 import { Button } from "@/shared/ui/Button.tsx";
-import { AlertCircle, ArrowLeft, Clock, Star, StarOff } from "lucide-react";
+import { AlertCircle, ArrowLeft, Star, StarOff } from "lucide-react";
+import ErrorCard from "@/shared/ui/ErrorCard.tsx";
 
 function DetailPage() {
   const { locationId } = useParams();
@@ -36,20 +39,6 @@ function DetailPage() {
     }
   };
 
-  const formatTime = (dtTxt: string) => {
-    const date = new Date(dtTxt);
-    return date.toLocaleTimeString("ko-KR", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    });
-  };
-
-  const formatDate = (dtTxt: string) => {
-    const date = new Date(dtTxt);
-    return date.toLocaleDateString("ko-KR", { month: "short", day: "numeric" });
-  };
-
   if (!district) {
     return (
       <div className="bg-background flex min-h-screen items-center justify-center px-4">
@@ -72,30 +61,20 @@ function DetailPage() {
   }
 
   if (isError) {
-    return (
-      <div className="bg-background flex min-h-screen items-center justify-center px-4">
-        <Card className="w-full max-w-md">
-          <CardContent className="flex flex-col items-center gap-4 pt-6">
-            <AlertCircle className="text-destructive h-10 w-10" />
-            <p className="text-muted-foreground text-center text-sm">
-              {error instanceof Error ? error.message : "알 수 없는 에러"}
-            </p>
-            <Button variant="outline" onClick={() => navigate(-1)}>
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              뒤로가기
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
+    return <ErrorCard error={error} />;
   }
 
   const weather = currentWeather.data;
   const hourlyForecast = forecast.data ?? [];
 
+  const name = formatString(weather?.name, "-");
+  const temp = formatTemp(weather?.main?.temp);
+  const tempMin = formatTemp(weather?.main?.temp_min);
+  const tempMax = formatTemp(weather?.main?.temp_max);
+  const description = formatString(weather?.weather?.[0]?.description, "정보 없음");
+
   return (
     <div>
-      {/* 헤더 */}
       <div className="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-center sm:justify-between">
         <Button variant="ghost" onClick={() => navigate(-1)} className="w-fit">
           <ArrowLeft className="mr-2 h-4 w-4" />
@@ -121,39 +100,8 @@ function DetailPage() {
         </Button>
       </div>
 
-      {/* 현재 날씨 카드 */}
-      <WeatherCard
-        name={weather?.name || "-"}
-        temp={weather?.main?.temp}
-        tempMin={weather?.main?.temp_min}
-        tempMax={weather?.main?.temp_max}
-        description={weather?.weather?.[0]?.description || "정보 없음"}
-      />
-
-      {/* 시간대별 기온 카드 */}
-      <Card>
-        <CardHeader className="pb-2 sm:pb-4">
-          <CardTitle className="flex items-center gap-2 text-base sm:text-xl">
-            <Clock className="h-4 w-4 text-violet-500 sm:h-5 sm:w-5" />
-            시간대별 기온
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex gap-3 overflow-x-auto pb-2">
-            {hourlyForecast.map((item: HourlyForecast) => (
-              <div
-                key={item.dt}
-                className="bg-muted/50 flex min-w-[100px] flex-col items-center gap-2 rounded-lg p-3 sm:min-w-[120px] sm:p-4"
-              >
-                <p className="text-muted-foreground text-xs">{formatDate(item.dt_txt)}</p>
-                <p className="text-sm font-medium">{formatTime(item.dt_txt)}</p>
-                <p className="text-lg font-bold sm:text-xl">{Math.round(item.main.temp)}°C</p>
-                <p className="text-muted-foreground text-center text-xs">{item.weather[0]?.description}</p>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      <WeatherCard name={name} temp={temp} tempMin={tempMin} tempMax={tempMax} description={description} />
+      <HourlyForecastCard forecast={hourlyForecast} />
     </div>
   );
 }

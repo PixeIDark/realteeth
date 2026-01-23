@@ -3,11 +3,11 @@ import { useNavigate } from "react-router";
 import type { District } from "@/shared/data/koreaDistricts";
 import { LINKS } from "@/app/routes/route";
 import { SearchResultList, useDistrictSearch } from "@/features/search-district";
-import { useFavorites } from "../../../features/favorite";
 import { Button } from "@/shared/ui/Button";
 import { Star } from "lucide-react";
 import SearchInput from "@/shared/ui/SearchInput.tsx";
 import { useListKeyboardNav } from "@/shared/lib/useListKeyboardNav.ts";
+import { useFavorites } from "@/features/favorite";
 
 function DistrictSearchBox() {
   const navigate = useNavigate();
@@ -62,7 +62,7 @@ function DistrictSearchBox() {
   );
 
   return (
-    <div className="relative mb-6 sm:mb-8">
+    <div className="relative">
       <SearchInput value={query} onChange={setQuery} onKeyDown={handleKeyDown} />
       <SearchResultList
         results={searchResults}

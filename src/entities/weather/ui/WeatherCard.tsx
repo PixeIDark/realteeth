@@ -1,5 +1,6 @@
 import { Cloud, MapPin, Thermometer } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/Card";
+import SectionHeader from "@/shared/ui/SectionHeader";
 
 interface WeatherCardProps {
   name: string;
@@ -11,11 +12,10 @@ interface WeatherCardProps {
 
 function WeatherCard({ name, temp, tempMin, tempMax, description }: WeatherCardProps) {
   return (
-    <Card className="mb-6 overflow-hidden sm:mb-8">
-      <CardHeader className="pb-2 sm:pb-4">
-        <CardTitle className="flex items-center gap-2 text-base sm:text-xl">
-          <MapPin className="text-primary h-4 w-4 sm:h-5 sm:w-5" />
-          현재 위치 날씨
+    <Card>
+      <CardHeader>
+        <CardTitle>
+          <SectionHeader icon={<MapPin className="text-primary h-4 w-4 sm:h-5 sm:w-5" />} title="현재 위치 날씨" />
         </CardTitle>
       </CardHeader>
       <CardContent>
