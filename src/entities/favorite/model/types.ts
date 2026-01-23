@@ -1,4 +1,4 @@
-export interface Favorite {
+export interface FavoriteItem {
   id: string;
   districtId: string;
   alias: string;

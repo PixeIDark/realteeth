@@ -5,40 +5,21 @@ interface Location {
   lon: number;
 }
 
-interface UseCurrentLocationReturn {
-  location: Location | null;
-  errorMessage: string | null;
-  isLoading: boolean;
-}
+const DEFAULT_LOCATION: Location = { lat: 37.5665, lon: 126.978 };
 
-export function useCurrentLocation(): UseCurrentLocationReturn {
-  const [location, setLocation] = useState<Location | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+export function useCurrentLocation() {
+  const [location, setLocation] = useState<Location>(DEFAULT_LOCATION);
 
   useEffect(() => {
-    if (!navigator.geolocation) {
-      queueMicrotask(() => {
-        setErrorMessage("브라우저가 위치 정보를 지원하지 않습니다.");
-        setIsLoading(false);
-      });
-      return;
-    }
+    if (!navigator.geolocation) return;
 
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setLocation({
-          lat: position.coords.latitude,
-          lon: position.coords.longitude,
-        });
-        setIsLoading(false);
-      },
-      (err) => {
-        setErrorMessage(err.message);
-        setIsLoading(false);
-      }
-    );
+    navigator.geolocation.getCurrentPosition((position) => {
+      setLocation({
+        lat: position.coords.latitude,
+        lon: position.coords.longitude,
+      });
+    });
   }, []);
 
-  return { location, errorMessage, isLoading };
+  return { location };
 }

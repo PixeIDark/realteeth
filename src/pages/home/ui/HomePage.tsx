@@ -1,108 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
 import { useCurrentLocation } from "@/features/get-current-location";
-import { useFavorites } from "@/features/manage-favorite";
-import { type HourlyForecast, useWeatherDetail, WeatherCard, WeatherLoading } from "@/entities/weather";
-import { type District, districts } from "@/shared/data/koreaDistricts";
-import { LINKS } from "@/app/routes/route";
-import { FavoriteCard } from "@/widgets/favorite-card";
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/Card.tsx";
-import { Input } from "@/shared/ui/Input.tsx";
-import { Button } from "@/shared/ui/Button.tsx";
-import { AlertCircle, Clock, MapPin, Search, Star } from "lucide-react";
+import { HourlyForecastCard, useWeatherDetail, WeatherCard, WeatherLoading } from "@/entities/weather";
+import { DistrictSearchBox } from "@/widgets/district-search-box";
+import { FavoriteList } from "@/widgets/favorite-list";
+import { Card, CardContent } from "@/shared/ui/Card";
+import { AlertCircle } from "lucide-react";
 
 function HomePage() {
-  const navigate = useNavigate();
-  const [query, setQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<District[]>([]);
-  const [noResults, setNoResults] = useState(false);
-  const [focusIndex, setFocusIndex] = useState(-1);
-
   const { location } = useCurrentLocation();
-  const { favorites, addFavorite, removeFavorite, updateAlias } = useFavorites();
-
-  const { currentWeather, forecast, isLoading, isError, error } = useWeatherDetail(
-    location?.lat ?? 0,
-    location?.lon ?? 0,
-    !!location
-  );
-
-  // 검색 디바운스
-  useEffect(() => {
-    if (!query.trim()) {
-      setSearchResults([]);
-      setNoResults(false);
-      setFocusIndex(-1);
-      return;
-    }
-
-    const timer = setTimeout(() => {
-      const filtered = districts.filter((d) => d.fullName.includes(query) || d.name.includes(query));
-      setSearchResults(filtered.slice(0, 20));
-      setNoResults(filtered.length === 0);
-      setFocusIndex(-1);
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, [query]);
-
-  const handleSelect = (district: District) => {
-    navigate(LINKS.DETAIL(district.id));
-    setQuery("");
-    setSearchResults([]);
-    setNoResults(false);
-    setFocusIndex(-1);
-  };
-
-  const handleAddFavorite = (district: District) => {
-    addFavorite({
-      id: district.id,
-      fullName: district.fullName,
-      lat: district.lat,
-      lon: district.lon,
-    });
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (searchResults.length === 0) return;
-
-    switch (e.key) {
-      case "ArrowDown":
-        e.preventDefault();
-        setFocusIndex((prev) => (prev < searchResults.length - 1 ? prev + 1 : prev));
-        break;
-      case "ArrowUp":
-        e.preventDefault();
-        setFocusIndex((prev) => (prev > 0 ? prev - 1 : -1));
-        break;
-      case "Enter":
-        e.preventDefault();
-        if (focusIndex >= 0) {
-          handleSelect(searchResults[focusIndex]);
-        } else if (searchResults.length > 0) {
-          handleSelect(searchResults[0]);
-        }
-        break;
-      case "Escape":
-        setSearchResults([]);
-        setFocusIndex(-1);
-        break;
-    }
-  };
-
-  const formatTime = (dtTxt: string) => {
-    const date = new Date(dtTxt);
-    return date.toLocaleTimeString("ko-KR", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    });
-  };
-
-  const formatDate = (dtTxt: string) => {
-    const date = new Date(dtTxt);
-    return date.toLocaleDateString("ko-KR", { month: "short", day: "numeric" });
-  };
+  const { currentWeather, forecast, isLoading, isError, error } = useWeatherDetail(location.lat, location.lon, true);
 
   if (isLoading) {
     return <WeatherLoading />;
@@ -129,66 +34,7 @@ function HomePage() {
   return (
     <div className="bg-background min-h-screen">
       <div className="mx-auto max-w-6xl px-4 py-4 sm:px-6 sm:py-6 lg:px-8 lg:py-8">
-        {/* 검색 */}
-        <div className="relative mb-6 sm:mb-8">
-          <div className="relative">
-            <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 sm:h-5 sm:w-5" />
-            <Input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="장소 검색 (시, 구, 동)"
-              className="h-10 pl-9 text-sm sm:h-12 sm:pl-11 sm:text-base"
-            />
-          </div>
-
-          {searchResults.length > 0 && (
-            <Card className="absolute z-20 mt-1 w-full overflow-hidden">
-              <ul className="max-h-60 overflow-y-auto sm:max-h-80">
-                {searchResults.map((d, index) => (
-                  <li
-                    key={d.id}
-                    className={`flex items-center justify-between gap-2 px-3 py-2.5 transition-colors sm:px-4 sm:py-3 ${
-                      focusIndex === index ? "bg-accent" : "hover:bg-muted/50"
-                    }`}
-                  >
-                    <button
-                      type="button"
-                      onClick={() => handleSelect(d)}
-                      className="flex min-w-0 flex-1 cursor-pointer items-center gap-2 text-left"
-                    >
-                      <MapPin className="text-muted-foreground h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
-                      <span className="truncate text-sm sm:text-base">{d.fullName}</span>
-                    </button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleAddFavorite(d)}
-                      className="shrink-0 text-xs sm:text-sm"
-                    >
-                      <Star className="mr-1 h-3 w-3 sm:h-3.5 sm:w-3.5" />
-                      <span className="hidden sm:inline">즐겨찾기</span>
-                      <span className="sm:hidden">추가</span>
-                    </Button>
-                  </li>
-                ))}
-              </ul>
-            </Card>
-          )}
-
-          {noResults && query.trim() && (
-            <Card className="absolute z-20 mt-1 w-full">
-              <CardContent className="py-4 sm:py-6">
-                <p className="text-muted-foreground text-center text-xs sm:text-sm">
-                  해당 장소의 정보가 제공되지 않습니다.
-                </p>
-              </CardContent>
-            </Card>
-          )}
-        </div>
-
-        {/* 현재 위치 날씨 */}
+        <DistrictSearchBox />
         <WeatherCard
           name={weather?.name || "-"}
           temp={weather?.main?.temp}
@@ -196,63 +42,8 @@ function HomePage() {
           tempMax={weather?.main?.temp_max}
           description={weather?.weather?.[0]?.description || "정보 없음"}
         />
-
-        {/* 시간대별 기온 */}
-        <Card className="mb-6 sm:mb-8">
-          <CardHeader className="pb-2 sm:pb-4">
-            <CardTitle className="flex items-center gap-2 text-base sm:text-xl">
-              <Clock className="h-4 w-4 text-violet-500 sm:h-5 sm:w-5" />
-              시간대별 기온
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex gap-3 overflow-x-auto pb-2">
-              {hourlyForecast.map((item: HourlyForecast) => (
-                <div
-                  key={item.dt}
-                  className="bg-muted/50 flex min-w-[100px] flex-col items-center gap-2 rounded-lg p-3 sm:min-w-[120px] sm:p-4"
-                >
-                  <p className="text-muted-foreground text-xs">{formatDate(item.dt_txt)}</p>
-                  <p className="text-sm font-medium">{formatTime(item.dt_txt)}</p>
-                  <p className="text-lg font-bold sm:text-xl">{Math.round(item.main.temp)}°C</p>
-                  <p className="text-muted-foreground text-center text-xs">{item.weather[0]?.description}</p>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* 즐겨찾기 */}
-        <section>
-          <div className="mb-4 flex items-center justify-between sm:mb-6">
-            <h2 className="flex items-center gap-2 text-lg font-semibold sm:text-xl">
-              <Star className="h-4 w-4 text-yellow-500 sm:h-5 sm:w-5" />
-              즐겨찾기
-            </h2>
-            <span className="bg-muted text-muted-foreground rounded-full px-2.5 py-0.5 text-xs font-medium sm:px-3 sm:py-1 sm:text-sm">
-              {favorites.length}/6
-            </span>
-          </div>
-
-          {favorites.length === 0 ? (
-            <Card>
-              <CardContent className="flex flex-col items-center justify-center py-10 sm:py-16">
-                <Star className="text-muted-foreground/40 mb-3 h-10 w-10 sm:h-12 sm:w-12" />
-                <p className="text-muted-foreground text-center text-xs sm:text-sm">
-                  즐겨찾기한 장소가 없습니다.
-                  <br />
-                  검색을 통해 장소를 추가해보세요.
-                </p>
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
-              {favorites.map((fav) => (
-                <FavoriteCard key={fav.id} favorite={fav} onRemove={removeFavorite} onUpdateAlias={updateAlias} />
-              ))}
-            </div>
-          )}
-        </section>
+        <HourlyForecastCard forecast={hourlyForecast} />
+        <FavoriteList />
       </div>
     </div>
   );

@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import type { Favorite } from "../../shared/types/favorite";
+import type { FavoriteItem } from "@/entities/favorite";
 
 const STORAGE_KEY = "weather-favorites";
 const MAX_FAVORITES = 6;
 
 export function useFavorites() {
-  const [favorites, setFavorites] = useState<Favorite[]>(() => {
+  const [favorites, setFavorites] = useState<FavoriteItem[]>(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
     return stored ? JSON.parse(stored) : [];
   });

@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from "react-router";
 import { districts } from "@/shared/data/koreaDistricts";
-import { useFavorites } from "@/features/manage-favorite";
+import { useFavorites } from "../../../features/favorite";
 import { type HourlyForecast, useWeatherDetail, WeatherCard, WeatherLoading } from "@/entities/weather";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/Card.tsx";
 import { Button } from "@/shared/ui/Button.tsx";

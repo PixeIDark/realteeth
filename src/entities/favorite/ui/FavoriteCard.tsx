@@ -1,15 +1,15 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { LINKS } from "@/app/routes/route";
-import type { Favorite } from "@/shared/types/favorite";
+import { LINKS } from "@/app/routes/route.ts";
 import { Card, CardContent, CardHeader } from "@/shared/ui/Card.tsx";
 import { Button } from "@/shared/ui/Button.tsx";
 import { Input } from "@/shared/ui/Input.tsx";
 import { Check, Cloud, Loader2, Pencil, Trash2, X } from "lucide-react";
 import { useCurrentWeather } from "@/entities/weather/model/queries.ts";
+import type { FavoriteItem } from "@/entities/favorite/model/types.ts";
 
 interface FavoriteCardProps {
-  favorite: Favorite;
+  favorite: FavoriteItem;
   onRemove: (id: string) => void;
   onUpdateAlias: (id: string, alias: string) => void;
 }
