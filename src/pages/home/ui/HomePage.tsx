@@ -6,6 +6,7 @@ import { FavoriteList } from "@/widgets/favorite-list";
 import ErrorCard from "@/shared/ui/ErrorCard.tsx";
 import { formatString } from "@/shared/lib/formater.ts";
 
+// 에러처리 서스펜스로 페이지 감싸서 하고, useSuspenseQuery 활용해서 데이터 정합성 보장해보자
 function HomePage() {
   const { location } = useCurrentLocation();
   const { currentWeather, forecast, isLoading, isError, error } = useWeatherDetail(location.lat, location.lon, true);
