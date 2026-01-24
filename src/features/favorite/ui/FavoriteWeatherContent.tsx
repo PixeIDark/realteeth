@@ -1,8 +1,18 @@
 import { useCurrentWeather } from "@/entities/weather/model/queries.ts";
 import { Cloud } from "lucide-react";
+import ItemLoader from "@/shared/ui/ItemLoader.tsx";
+import ErrorCard from "@/shared/ui/ErrorCard.tsx";
 
 function FavoriteWeatherContent({ lat, lon }: { lat: number; lon: number }) {
-  const { data: weather } = useCurrentWeather(lat, lon);
+  const { data: weather, isLoading, isError } = useCurrentWeather(lat, lon);
+
+  if (isLoading) {
+    return <ItemLoader text="날씨 로딩 중..." />;
+  }
+
+  if (isError || !weather) {
+    return <ErrorCard message="즐겨찾기 날씨 정보를 불러올 수 없습니다" />;
+  }
 
   return (
     <div className="space-y-1.5 sm:space-y-2">

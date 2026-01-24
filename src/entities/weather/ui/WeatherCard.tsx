@@ -2,6 +2,8 @@ import { Cloud, MapPin, Thermometer } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/Card";
 import SectionHeader from "@/shared/ui/SectionHeader";
 import { useCurrentWeather } from "@/entities/weather/model/queries.ts";
+import ItemLoader from "@/shared/ui/ItemLoader.tsx";
+import ErrorCard from "@/shared/ui/ErrorCard.tsx";
 
 interface WeatherCardProps {
   lat: number;
@@ -9,7 +11,15 @@ interface WeatherCardProps {
 }
 
 function WeatherCard({ lat, lon }: WeatherCardProps) {
-  const { data: weather } = useCurrentWeather(lat, lon);
+  const { data: weather, isLoading, isError } = useCurrentWeather(lat, lon);
+
+  if (isLoading) {
+    return <ItemLoader text="현재 날씨 로딩 중..." />;
+  }
+
+  if (isError || !weather) {
+    return <ErrorCard message="현재 날씨를 불러올 수 없습니다" />;
+  }
 
   return (
     <Card>

@@ -1,6 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/Card";
 import { Clock } from "lucide-react";
 import { useForecast } from "@/entities/weather/model/queries.ts";
+import ItemLoader from "@/shared/ui/ItemLoader.tsx";
+import ErrorCard from "@/shared/ui/ErrorCard.tsx";
 
 interface HourlyForecastCardProps {
   lat: number;
@@ -8,7 +10,15 @@ interface HourlyForecastCardProps {
 }
 
 function HourlyForecastCard({ lat, lon }: HourlyForecastCardProps) {
-  const { data: forecast } = useForecast(lat, lon);
+  const { data: forecast, isLoading, isError } = useForecast(lat, lon);
+
+  if (isLoading) {
+    return <ItemLoader text="시간대별 기후 로딩 중..." />;
+  }
+
+  if (isError || !forecast) {
+    return <ErrorCard message="시간대별 예보를 불러올 수 없습니다" />;
+  }
 
   return (
     <Card className="overflow-hidden">

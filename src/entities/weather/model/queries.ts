@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import type { HourlyForecast } from "@/entities/weather";
 import { weatherApi } from "@/entities/weather/api/weatherApi.ts";
 import { weatherKeys } from "@/entities/weather/model/keys.ts";
@@ -6,7 +6,7 @@ import { formatTemp } from "@/entities/weather/lib/formatWeather.ts";
 import { formatShortDate, formatString, formatTime } from "@/shared/lib/formater.ts";
 
 export function useCurrentWeather(lat: number, lon: number) {
-  return useSuspenseQuery({
+  return useQuery({
     queryKey: weatherKeys.current(lat, lon),
     queryFn: () => weatherApi.getCurrent(lat, lon),
     select: (data) => ({
@@ -20,7 +20,7 @@ export function useCurrentWeather(lat: number, lon: number) {
 }
 
 export function useForecast(lat: number, lon: number) {
-  return useSuspenseQuery({
+  return useQuery({
     queryKey: weatherKeys.forecast(lat, lon),
     queryFn: () => weatherApi.getForecast(lat, lon),
     select: (data) => {
