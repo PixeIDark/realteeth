@@ -1,7 +1,7 @@
 import { Button } from "@/shared/ui/Button.tsx";
 import { Star, StarOff } from "lucide-react";
-import { useFavorites } from "@/features/favorite";
 import type { District } from "@/entities/district/model/type.ts";
+import { useFavorites } from "@/entities/favorite";
 
 interface FavoriteButtonProps {
   district: District;
