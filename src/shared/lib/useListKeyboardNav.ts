@@ -19,28 +19,30 @@ export function useListKeyboardNav<T>({
     (e: React.KeyboardEvent) => {
       if (items.length === 0) return;
 
-      switch (e.key) {
-        case "ArrowDown":
+      const actions: Record<string, () => void> = {
+        ArrowDown: () => {
           e.preventDefault();
           setFocusIndex((prev) => (prev < items.length - 1 ? prev + 1 : prev));
-          break;
-        case "ArrowUp":
+        },
+        ArrowUp: () => {
           e.preventDefault();
           setFocusIndex((prev) => (prev > 0 ? prev - 1 : -1));
-          break;
-        case "Enter":
+        },
+        Enter: () => {
           e.preventDefault();
           if (focusIndex >= 0) {
             onSelect(items[focusIndex]);
           } else if (items.length > 0) {
             onSelect(items[0]);
           }
-          break;
-        case "Escape":
+        },
+        Escape: () => {
           e.preventDefault();
           onEscape?.();
-          break;
-      }
+        },
+      };
+
+      actions[e.key]?.();
     },
     [items, focusIndex, setFocusIndex, onSelect, onEscape]
   );
