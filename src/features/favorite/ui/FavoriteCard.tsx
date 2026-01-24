@@ -1,13 +1,14 @@
-import { Suspense, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router";
 import { LINKS } from "@/app/routes/route.ts";
 import { Card, CardContent, CardHeader } from "@/shared/ui/Card.tsx";
 import { Button } from "@/shared/ui/Button.tsx";
 import { Input } from "@/shared/ui/Input.tsx";
-import { Check, Pencil, Trash2, X } from "lucide-react";
+import { Check, Cloud, Pencil, Trash2, X } from "lucide-react";
 import type { FavoriteItem } from "@/entities/favorite/model/types.ts";
 import ItemLoader from "@/shared/ui/ItemLoader.tsx";
-import FavoriteWeatherContent from "@/features/favorite/ui/FavoriteWeatherContent.tsx";
+import ErrorCard from "@/shared/ui/ErrorCard.tsx";
+import { useCurrentWeather } from "@/entities/weather/model/queries.ts";
 
 interface FavoriteCardProps {
   favorite: FavoriteItem;
@@ -19,6 +20,7 @@ function FavoriteCard({ favorite, onRemove, onUpdateAlias }: FavoriteCardProps) 
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [alias, setAlias] = useState(favorite.alias);
+  const { data: weather, isLoading, isError } = useCurrentWeather(favorite.lat, favorite.lon);
 
   const handleCardClick = () => {
     if (!isEditing) {
@@ -31,6 +33,28 @@ function FavoriteCard({ favorite, onRemove, onUpdateAlias }: FavoriteCardProps) 
     setIsEditing(false);
   };
 
+  const handleEditClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsEditing(true);
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+  };
+
+  const handleRemove = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onRemove(favorite.id);
+  };
+
+  const handleStopPropagation = (e: React.MouseEvent) => {
+    e.stopPropagation();
+  };
+
+  const handleAliasChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setAlias(e.target.value);
+  };
+
   return (
     <Card
       onClick={handleCardClick}
@@ -40,11 +64,11 @@ function FavoriteCard({ favorite, onRemove, onUpdateAlias }: FavoriteCardProps) 
     >
       <CardHeader className="pb-2 sm:pb-3">
         {isEditing ? (
-          <div onClick={(e) => e.stopPropagation()} className="flex flex-col gap-2 sm:flex-row sm:items-center">
+          <div onClick={handleStopPropagation} className="flex flex-col gap-2 sm:flex-row sm:items-center">
             <Input
               type="text"
               value={alias}
-              onChange={(e) => setAlias(e.target.value)}
+              onChange={handleAliasChange}
               className="flex-1 text-sm sm:text-base"
               autoFocus
             />
@@ -53,7 +77,7 @@ function FavoriteCard({ favorite, onRemove, onUpdateAlias }: FavoriteCardProps) 
                 <Check className="h-4 w-4 sm:mr-1" />
                 <span className="hidden sm:inline">저장</span>
               </Button>
-              <Button size="sm" variant="outline" onClick={() => setIsEditing(false)} className="flex-1 sm:flex-none">
+              <Button size="sm" variant="outline" onClick={handleCancelEdit} className="flex-1 sm:flex-none">
                 <X className="h-4 w-4 sm:mr-1" />
                 <span className="hidden sm:inline">취소</span>
               </Button>
@@ -66,10 +90,7 @@ function FavoriteCard({ favorite, onRemove, onUpdateAlias }: FavoriteCardProps) 
               size="icon"
               variant="ghost"
               className="h-7 w-7 shrink-0 opacity-0 transition-opacity group-hover:opacity-100 sm:h-8 sm:w-8"
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsEditing(true);
-              }}
+              onClick={handleEditClick}
             >
               <Pencil className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               <span className="sr-only">수정</span>
@@ -77,21 +98,25 @@ function FavoriteCard({ favorite, onRemove, onUpdateAlias }: FavoriteCardProps) 
           </div>
         )}
       </CardHeader>
-
       <CardContent className="space-y-2 sm:space-y-3">
-        <Suspense fallback={<ItemLoader text="날씨 로딩 중..." />}>
-          <FavoriteWeatherContent lat={favorite.lat} lon={favorite.lon} />
-        </Suspense>
-
-        <Button
-          variant="destructive"
-          size="sm"
-          className="w-full text-xs sm:text-sm"
-          onClick={(e) => {
-            e.stopPropagation();
-            onRemove(favorite.id);
-          }}
-        >
+        {isLoading ? (
+          <ItemLoader text="날씨 로딩 중..." />
+        ) : isError || !weather ? (
+          <ErrorCard message="날씨 정보를 불러올 수 없습니다" />
+        ) : (
+          <div className="space-y-1.5 sm:space-y-2">
+            <div className="flex items-center gap-2">
+              <Cloud className="text-muted-foreground h-4 w-4 sm:h-5 sm:w-5" />
+              <span className="text-xl font-bold sm:text-2xl">{weather.temp}</span>
+            </div>
+            <div className="text-muted-foreground flex flex-wrap gap-x-3 gap-y-1 text-xs sm:text-sm">
+              <span>최저 {weather.tempMin}</span>
+              <span>최고 {weather.tempMax}</span>
+            </div>
+            <p className="text-muted-foreground text-xs capitalize sm:text-sm">{weather.description}</p>
+          </div>
+        )}
+        <Button variant="destructive" size="sm" className="w-full text-xs sm:text-sm" onClick={handleRemove}>
           <Trash2 className="mr-1.5 h-3.5 w-3.5 sm:h-4 sm:w-4" />
           삭제
         </Button>
