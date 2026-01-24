@@ -1,21 +1,19 @@
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import type { HourlyForecast } from "@/entities/weather";
 import { weatherApi } from "@/entities/weather/api/weatherApi.ts";
 import { weatherKeys } from "@/entities/weather/model/keys.ts";
 
-export function useCurrentWeather(lat: number, lon: number, enabled = true) {
-  return useQuery({
+export function useCurrentWeather(lat: number, lon: number) {
+  return useSuspenseQuery({
     queryKey: weatherKeys.current(lat, lon),
     queryFn: () => weatherApi.getCurrent(lat, lon),
-    enabled,
   });
 }
 
-export function useForecast(lat: number, lon: number, enabled = true) {
-  return useQuery({
+export function useForecast(lat: number, lon: number) {
+  return useSuspenseQuery({
     queryKey: weatherKeys.forecast(lat, lon),
     queryFn: () => weatherApi.getForecast(lat, lon),
-    enabled,
     select: (data) => {
       const today = new Date().toISOString().split("T")[0];
       const todayForecast = data.list.filter((item: HourlyForecast) => item.dt_txt.startsWith(today));

@@ -1,23 +1,13 @@
 import { useCurrentLocation } from "@/features/get-current-location";
-import { HourlyForecastCard, useWeatherDetail, WeatherCard, WeatherLoading } from "@/entities/weather";
+import { HourlyForecastCard, useWeatherDetail, WeatherCard } from "@/entities/weather";
 import { formatTemp } from "@/entities/weather/lib/formatWeather.ts";
 import { DistrictSearchBox } from "@/widgets/district-search-box";
 import { FavoriteList } from "@/widgets/favorite-list";
-import ErrorCard from "@/shared/ui/ErrorCard.tsx";
 import { formatString } from "@/shared/lib/formater.ts";
 
-// 에러처리 서스펜스로 페이지 감싸서 하고, useSuspenseQuery 활용해서 데이터 정합성 보장해보자
 function HomePage() {
   const { location } = useCurrentLocation();
-  const { currentWeather, forecast, isLoading, isError, error } = useWeatherDetail(location.lat, location.lon, true);
-
-  if (isLoading) {
-    return <WeatherLoading />;
-  }
-
-  if (isError) {
-    return <ErrorCard error={error} />;
-  }
+  const { currentWeather, forecast } = useWeatherDetail(location.lat, location.lon);
 
   const weather = currentWeather.data;
   const hourlyForecast = forecast.data ?? [];

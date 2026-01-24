@@ -1,8 +1,8 @@
 import { useCurrentWeather, useForecast } from "@/entities/weather/model/queries.ts";
 
-export function useWeatherDetail(lat: number, lon: number, enabled = true) {
-  const currentWeather = useCurrentWeather(lat, lon, enabled);
-  const forecast = useForecast(lat, lon, enabled);
+export function useWeatherDetail(lat: number, lon: number) {
+  const currentWeather = useCurrentWeather(lat, lon);
+  const forecast = useForecast(lat, lon);
 
   return {
     currentWeather,
