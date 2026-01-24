@@ -1,5 +1,5 @@
 import type { FavoriteItem } from "@/entities/favorite/model/types.ts";
-import FavoriteCard from "@/features/favorite/ui/FavoriteCard.tsx";
+import { FavoriteCard } from "@/features/favorite";
 
 interface FavoriteGridProps {
   favorites: FavoriteItem[];

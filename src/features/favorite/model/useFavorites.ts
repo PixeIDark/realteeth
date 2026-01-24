@@ -45,9 +45,10 @@ export function useFavorites() {
     setFavorites((prev) => prev.map((f) => (f.id === id ? { ...f, alias } : f)));
   };
 
-  const isFavorite = (districtId: string) => {
-    return favorites.some((f) => f.districtId === districtId);
+  const getFavoriteItem = (districtId: string | undefined) => {
+    if (!districtId) return undefined;
+    return favorites.find((f) => f.districtId === districtId);
   };
 
-  return { favorites, addFavorite, removeFavorite, updateAlias, isFavorite };
+  return { favorites, addFavorite, removeFavorite, updateAlias, getFavoriteItem };
 }
