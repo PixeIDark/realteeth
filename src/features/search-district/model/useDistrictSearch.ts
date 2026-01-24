@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
-import type { District } from "@/shared/data/koreaDistricts";
 import { districts } from "@/shared/data/koreaDistricts";
-import { filterDistricts } from "../lib/filterDistricts";
+import type { District } from "@/shared/model/type.ts";
+import { filterDistricts } from "@/features/search-district/lib/filterDistricts.ts";
 
 interface UseDistrictSearchOptions {
   debounceMs?: number;
