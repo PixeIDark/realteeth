@@ -1,9 +1,5 @@
-export const formatTemp = (temp: number | undefined): string => {
-  if (temp === undefined) return "";
-  return `${temp}°C`;
-};
+import { formatString } from "@/shared/lib/formater.ts";
 
-export const formatTempRange = (min: number | undefined, max: number | undefined): string => {
-  if (min === undefined || max === undefined) return "";
-  return `${min}°C / ${max}°C`;
+export const formatTemp = (temp: number | undefined): string => {
+  return formatString(String(temp), "-");
 };
