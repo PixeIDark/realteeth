@@ -1,7 +1,8 @@
-export interface WeatherData {
-  temp: number;
-  tempMin: number;
-  tempMax: number;
+export interface FormattedForecast {
+  id: number;
+  date: string;
+  time: string;
+  temp: string;
   description: string;
 }
 

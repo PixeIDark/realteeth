@@ -1,16 +1,16 @@
 import { Cloud, MapPin, Thermometer } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/Card";
 import SectionHeader from "@/shared/ui/SectionHeader";
+import { useCurrentWeather } from "@/entities/weather/model/queries.ts";
 
 interface WeatherCardProps {
-  name: string;
-  temp: string;
-  tempMin: string;
-  tempMax: string;
-  description: string;
+  lat: number;
+  lon: number;
 }
 
-function WeatherCard({ name, temp, tempMin, tempMax, description }: WeatherCardProps) {
+function WeatherCard({ lat, lon }: WeatherCardProps) {
+  const { data: weather } = useCurrentWeather(lat, lon);
+
   return (
     <Card>
       <CardHeader>
@@ -24,7 +24,7 @@ function WeatherCard({ name, temp, tempMin, tempMax, description }: WeatherCardP
             <MapPin className="text-muted-foreground h-5 w-5 sm:h-6 sm:w-6" />
             <div>
               <p className="text-muted-foreground text-xs sm:text-sm">도시</p>
-              <p className="text-sm font-semibold sm:text-lg">{name}</p>
+              <p className="text-sm font-semibold sm:text-lg">{weather.name}</p>
             </div>
           </div>
 
@@ -32,7 +32,7 @@ function WeatherCard({ name, temp, tempMin, tempMax, description }: WeatherCardP
             <Thermometer className="h-5 w-5 text-orange-500 sm:h-6 sm:w-6" />
             <div>
               <p className="text-muted-foreground text-xs sm:text-sm">현재 기온</p>
-              <p className="text-sm font-semibold sm:text-lg">{temp}</p>
+              <p className="text-sm font-semibold sm:text-lg">{weather.temp}</p>
             </div>
           </div>
 
@@ -41,7 +41,7 @@ function WeatherCard({ name, temp, tempMin, tempMax, description }: WeatherCardP
             <div>
               <p className="text-muted-foreground text-xs sm:text-sm">최저 / 최고</p>
               <p className="text-sm font-semibold sm:text-lg">
-                {tempMin} / {tempMax}
+                {weather.tempMin} / {weather.tempMax}
               </p>
             </div>
           </div>
@@ -50,7 +50,7 @@ function WeatherCard({ name, temp, tempMin, tempMax, description }: WeatherCardP
             <Cloud className="h-5 w-5 text-sky-500 sm:h-6 sm:w-6" />
             <div>
               <p className="text-muted-foreground text-xs sm:text-sm">날씨</p>
-              <p className="text-sm font-semibold capitalize sm:text-lg">{description}</p>
+              <p className="text-sm font-semibold capitalize sm:text-lg">{weather.description}</p>
             </div>
           </div>
         </div>

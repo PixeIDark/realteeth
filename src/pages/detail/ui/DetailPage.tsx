@@ -1,13 +1,10 @@
 import { useNavigate, useParams } from "react-router";
 import { districts } from "@/shared/data/koreaDistricts";
 import { useFavorites } from "@/features/favorite";
-import { HourlyForecastCard, useWeatherDetail, WeatherCard, WeatherLoading } from "@/entities/weather";
-import { formatTemp } from "@/entities/weather/lib/formatWeather.ts";
-import { formatString } from "@/shared/lib/formater.ts";
+import { HourlyForecastCard, WeatherCard } from "@/entities/weather";
 import { Card, CardContent } from "@/shared/ui/Card.tsx";
 import { Button } from "@/shared/ui/Button.tsx";
 import { AlertCircle, ArrowLeft, Star, StarOff } from "lucide-react";
-import ErrorCard from "@/shared/ui/ErrorCard.tsx";
 
 function DetailPage() {
   const { locationId } = useParams();
@@ -17,12 +14,6 @@ function DetailPage() {
   const district = districts.find((d) => d.id === locationId);
   const favoriteItem = favorites.find((f) => f.districtId === locationId);
   const isCurrentFavorite = isFavorite(locationId || "");
-
-  const { currentWeather, forecast, isLoading, isError, error } = useWeatherDetail(
-    district?.lat ?? 0,
-    district?.lon ?? 0,
-    !!district
-  );
 
   const handleToggleFavorite = () => {
     if (!district) return;
@@ -41,7 +32,7 @@ function DetailPage() {
 
   if (!district) {
     return (
-      <div className="bg-background flex min-h-screen items-center justify-center px-4">
+      <div className="fixed inset-0 flex items-center justify-center px-4">
         <Card className="w-full max-w-md">
           <CardContent className="flex flex-col items-center gap-4 pt-6">
             <AlertCircle className="text-destructive h-10 w-10" />
@@ -56,26 +47,9 @@ function DetailPage() {
     );
   }
 
-  if (isLoading) {
-    return <WeatherLoading />;
-  }
-
-  if (isError) {
-    return <ErrorCard error={error} />;
-  }
-
-  const weather = currentWeather.data;
-  const hourlyForecast = forecast.data ?? [];
-
-  const name = formatString(weather?.name, "-");
-  const temp = formatTemp(weather?.main?.temp);
-  const tempMin = formatTemp(weather?.main?.temp_min);
-  const tempMax = formatTemp(weather?.main?.temp_max);
-  const description = formatString(weather?.weather?.[0]?.description, "정보 없음");
-
   return (
-    <div>
-      <div className="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-center sm:justify-between">
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <Button variant="ghost" onClick={() => navigate(-1)} className="w-fit">
           <ArrowLeft className="mr-2 h-4 w-4" />
           뒤로가기
@@ -100,8 +74,8 @@ function DetailPage() {
         </Button>
       </div>
 
-      <WeatherCard name={name} temp={temp} tempMin={tempMin} tempMax={tempMax} description={description} />
-      <HourlyForecastCard forecast={hourlyForecast} />
+      <WeatherCard lat={district.lat} lon={district.lon} />
+      <HourlyForecastCard lat={district.lat} lon={district.lon} />
     </div>
   );
 }

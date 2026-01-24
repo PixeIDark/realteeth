@@ -1,13 +1,15 @@
-import type { HourlyForecast } from "../model/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/Card";
 import { Clock } from "lucide-react";
-import { formatShortDate, formatTime } from "@/shared/lib/formater.ts";
+import { useForecast } from "@/entities/weather/model/queries.ts";
 
 interface HourlyForecastCardProps {
-  forecast: HourlyForecast[];
+  lat: number;
+  lon: number;
 }
 
-function HourlyForecastCard({ forecast }: HourlyForecastCardProps) {
+function HourlyForecastCard({ lat, lon }: HourlyForecastCardProps) {
+  const { data: forecast } = useForecast(lat, lon);
+
   return (
     <Card className="overflow-hidden">
       <CardHeader>
@@ -20,13 +22,13 @@ function HourlyForecastCard({ forecast }: HourlyForecastCardProps) {
         <div className="flex gap-3 overflow-x-auto pb-2">
           {forecast.map((item) => (
             <div
-              key={item.dt}
+              key={item.id}
               className="bg-muted/50 flex min-w-[100px] flex-col items-center gap-2 rounded-lg p-3 sm:min-w-[120px] sm:p-4"
             >
-              <p className="text-muted-foreground text-xs">{formatShortDate(item.dt_txt)}</p>
-              <p className="text-sm font-medium">{formatTime(item.dt_txt)}</p>
-              <p className="text-lg font-bold sm:text-xl">{Math.round(item.main.temp)}°C</p>
-              <p className="text-muted-foreground text-center text-xs">{item.weather[0]?.description}</p>
+              <p className="text-muted-foreground text-xs">{item.date}</p>
+              <p className="text-sm font-medium">{item.time}</p>
+              <p className="text-lg font-bold sm:text-xl">{item.temp}</p>
+              <p className="text-muted-foreground text-center text-xs">{item.description}</p>
             </div>
           ))}
         </div>
