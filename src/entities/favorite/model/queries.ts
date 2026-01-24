@@ -16,8 +16,6 @@ export function useFavorites() {
     },
   });
 
-  const invalidate = () => queryClient.invalidateQueries({ queryKey: favoriteKeys.all });
-
   const addFavorite = useMutation({
     mutationFn: async (district: { id: string; fullName: string; lat: number; lon: number }) => {
       const current = [...favorites];
@@ -42,7 +40,7 @@ export function useFavorites() {
       ];
       localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
     },
-    onSuccess: invalidate,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: favoriteKeys.all }),
     onError: (error: Error) => alert(error.message),
   });
 
@@ -51,7 +49,7 @@ export function useFavorites() {
       const next = favorites.filter((f) => f.id !== id);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
     },
-    onSuccess: invalidate,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: favoriteKeys.all }),
   });
 
   const updateAlias = useMutation({
@@ -59,7 +57,7 @@ export function useFavorites() {
       const next = favorites.map((f) => (f.id === id ? { ...f, alias } : f));
       localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
     },
-    onSuccess: invalidate,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: favoriteKeys.all }),
   });
 
   return {
