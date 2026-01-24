@@ -1,14 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 import type { HourlyForecast } from "@/entities/weather";
-import { weatherApi } from "@/entities/weather/api/weatherApi.ts";
 import { weatherKeys } from "@/entities/weather/model/keys.ts";
 import { formatTemp } from "@/entities/weather/lib/formatWeather.ts";
 import { formatShortDate, formatString, formatTime } from "@/shared/lib/formater.ts";
+import { getCurrent } from "@/entities/weather/api/currentApi.ts";
+import { getForecast } from "@/entities/weather/api/forecastApi.ts";
 
 export function useCurrentWeather(lat: number, lon: number) {
   return useQuery({
     queryKey: weatherKeys.current(lat, lon),
-    queryFn: () => weatherApi.getCurrent(lat, lon),
+    queryFn: () => getCurrent(lat, lon),
     select: (data) => ({
       name: formatString(data.name, "-"),
       temp: formatTemp(data.main?.temp),
@@ -22,7 +23,7 @@ export function useCurrentWeather(lat: number, lon: number) {
 export function useForecast(lat: number, lon: number) {
   return useQuery({
     queryKey: weatherKeys.forecast(lat, lon),
-    queryFn: () => weatherApi.getForecast(lat, lon),
+    queryFn: () => getForecast(lat, lon),
     select: (data) => {
       const today = new Date().toISOString().split("T")[0];
       const filtered = data.list.filter((item: HourlyForecast) => item.dt_txt.startsWith(today));

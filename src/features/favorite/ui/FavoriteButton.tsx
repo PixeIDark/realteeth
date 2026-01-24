@@ -7,7 +7,6 @@ interface FavoriteButtonProps {
   district: District;
 }
 
-// TODO: 즐찾 검색창에서 여러개하면 마지막 하나만 추가됨 그리고 화면에 즉시 반영안되는데 인밸리드 쿼리해야할듯
 function FavoriteButton({ district }: FavoriteButtonProps) {
   const { addFavorite, removeFavorite, getFavoriteItem } = useFavorites();
   const favoriteItem = getFavoriteItem(district?.id);
