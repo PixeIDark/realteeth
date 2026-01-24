@@ -1,10 +1,10 @@
 import { useNavigate, useParams } from "react-router";
 import { districts } from "@/shared/data/koreaDistricts";
 import { useFavorites } from "@/features/favorite";
-import { HourlyForecastCard, WeatherCard } from "@/entities/weather";
-import { Card, CardContent } from "@/shared/ui/Card.tsx";
 import { Button } from "@/shared/ui/Button.tsx";
-import { AlertCircle, ArrowLeft, Star, StarOff } from "lucide-react";
+import { ArrowLeft, Star, StarOff } from "lucide-react";
+import { HourlyForecastCard, WeatherCard } from "@/features/weather";
+import PlaceNotFound from "@/shared/ui/PlaceNotFound.tsx";
 
 function DetailPage() {
   const { locationId } = useParams();
@@ -31,20 +31,7 @@ function DetailPage() {
   };
 
   if (!district) {
-    return (
-      <div className="fixed inset-0 flex items-center justify-center px-4">
-        <Card className="w-full max-w-md">
-          <CardContent className="flex flex-col items-center gap-4 pt-6">
-            <AlertCircle className="text-destructive h-10 w-10" />
-            <p className="text-muted-foreground text-center text-sm">해당 장소의 정보가 제공되지 않습니다.</p>
-            <Button variant="outline" onClick={() => navigate(-1)}>
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              뒤로가기
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
+    return <PlaceNotFound />;
   }
 
   return (
