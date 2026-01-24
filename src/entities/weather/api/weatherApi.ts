@@ -1,6 +1,7 @@
 import { ENV } from "@/shared/config/env";
 import type { CurrentWeatherResponse, ForecastResponse } from "@/entities/weather";
 
+// TODO: 두개 분리하기
 export const weatherApi = {
   getCurrent: async (lat: number, lon: number): Promise<CurrentWeatherResponse> => {
     const res = await fetch(

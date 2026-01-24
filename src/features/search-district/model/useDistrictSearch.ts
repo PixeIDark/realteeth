@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
-import { districts } from "@/shared/data/koreaDistricts";
-import type { District } from "@/shared/model/type.ts";
 import { filterDistricts } from "@/features/search-district/lib/filterDistricts.ts";
+import type { District } from "@/entities/district/model/type.ts";
+import { useDistricts } from "@/entities/district/model/queries.ts";
 
 interface UseDistrictSearchOptions {
   debounceMs?: number;
@@ -20,21 +20,21 @@ interface UseDistrictSearchReturn {
 
 export function useDistrictSearch(options: UseDistrictSearchOptions = {}): UseDistrictSearchReturn {
   const { debounceMs = 300, maxResults = 20 } = options;
-
+  const { data: districts } = useDistricts();
   const [query, setQuery] = useState("");
   const [searchResults, setSearchResults] = useState<District[]>([]);
   const [noResults, setNoResults] = useState(false);
   const [focusIndex, setFocusIndex] = useState(-1);
 
   useEffect(() => {
-    if (!query.trim()) {
-      setSearchResults([]);
-      setNoResults(false);
-      setFocusIndex(-1);
-      return;
-    }
-
     const timer = setTimeout(() => {
+      if (!query.trim()) {
+        setSearchResults([]);
+        setNoResults(false);
+        setFocusIndex(-1);
+        return;
+      }
+
       const filtered = filterDistricts(districts, query, maxResults);
       setSearchResults(filtered);
       setNoResults(filtered.length === 0);

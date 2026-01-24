@@ -1,6 +1,6 @@
 import { FavoriteButton } from "@/features/favorite";
 import BackButton from "@/shared/ui/BackButton.tsx";
-import type { District } from "@/shared/model/type.ts";
+import type { District } from "@/entities/district/model/type.ts";
 
 interface DetailHeaderActionsProps {
   district: District;

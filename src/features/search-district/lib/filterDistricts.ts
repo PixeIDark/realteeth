@@ -1,4 +1,4 @@
-import type { District } from "@/shared/model/type.ts";
+import type { District } from "@/entities/district/model/type.ts";
 
 export const filterDistricts = (districts: District[], query: string, limit = 20): District[] => {
   const trimmed = query.trim();

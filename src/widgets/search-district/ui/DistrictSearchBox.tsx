@@ -3,9 +3,9 @@ import { useNavigate } from "react-router";
 import { LINKS } from "@/app/routes/route";
 import { useDistrictSearch } from "@/features/search-district";
 import { useListKeyboardNav } from "@/shared/lib/useListKeyboardNav.ts";
-import type { District } from "@/shared/model/type.ts";
 import SearchResultList from "@/widgets/search-district/ui/SearchResultList.tsx";
 import SearchInput from "@/widgets/search-district/ui/SearchInput.tsx";
+import type { District } from "@/entities/district/model/type.ts";
 
 function DistrictSearchBox() {
   const navigate = useNavigate();

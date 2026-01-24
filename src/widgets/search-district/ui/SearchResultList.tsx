@@ -1,8 +1,8 @@
 import { Card } from "@/shared/ui/Card.tsx";
 import { MapPin } from "lucide-react";
 import { FavoriteButton } from "@/features/favorite";
-import type { District } from "@/shared/model/type.ts";
 import ErrorCard from "@/shared/ui/ErrorCard.tsx";
+import type { District } from "@/entities/district/model/type.ts";
 
 interface SearchResultListProps {
   results: District[];
