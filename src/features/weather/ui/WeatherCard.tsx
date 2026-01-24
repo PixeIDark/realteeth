@@ -1,6 +1,6 @@
 import { Cloud, MapPin, Thermometer } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/Card";
-import SectionHeader from "@/shared/ui/SectionHeader";
+import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/Card.tsx";
+import SectionHeader from "@/shared/ui/SectionHeader.tsx";
 import { useCurrentWeather } from "@/entities/weather/model/queries.ts";
 import ItemLoader from "@/shared/ui/ItemLoader.tsx";
 import ErrorCard from "@/shared/ui/ErrorCard.tsx";

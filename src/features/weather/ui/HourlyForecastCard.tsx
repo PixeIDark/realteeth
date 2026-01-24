@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/Card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/Card.tsx";
 import { Clock } from "lucide-react";
 import { useForecast } from "@/entities/weather/model/queries.ts";
 import ItemLoader from "@/shared/ui/ItemLoader.tsx";

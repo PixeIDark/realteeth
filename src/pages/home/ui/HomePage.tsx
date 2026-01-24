@@ -1,7 +1,7 @@
-import { useCurrentLocation } from "@/features/get-current-location";
-import { HourlyForecastCard, WeatherCard } from "@/entities/weather";
-import { DistrictSearchBox } from "@/widgets/district-search-box";
-import { FavoriteList } from "@/widgets/favorite-list";
+import { HourlyForecastCard, WeatherCard } from "@/features/weather";
+import { useCurrentLocation } from "@/shared/lib/useCurrentLocation.ts";
+import { DistrictSearchBox } from "@/widgets/search-district";
+import { FavoriteList } from "@/widgets/favorite";
 
 function HomePage() {
   const { location } = useCurrentLocation();

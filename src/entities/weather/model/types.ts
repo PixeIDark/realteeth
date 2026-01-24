@@ -1,11 +1,3 @@
-export interface FormattedForecast {
-  id: number;
-  date: string;
-  time: string;
-  temp: string;
-  description: string;
-}
-
 export interface CurrentWeatherResponse {
   main: {
     temp: number;
