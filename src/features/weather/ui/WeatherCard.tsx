@@ -25,7 +25,7 @@ function WeatherCard({ lat, lon }: WeatherCardProps) {
     <Card>
       <CardHeader>
         <CardTitle>
-          <SectionHeader icon={<MapPin className="text-primary h-4 w-4 sm:h-5 sm:w-5" />} title="현재 위치 날씨" />
+          <SectionHeader icon={<MapPin className="text-primary h-4 w-4 sm:h-5 sm:w-5" />} title="현재 날씨" />
         </CardTitle>
       </CardHeader>
       <CardContent>

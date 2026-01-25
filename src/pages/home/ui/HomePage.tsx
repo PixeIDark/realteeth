@@ -3,7 +3,6 @@ import { useCurrentLocation } from "@/shared/lib/useCurrentLocation.ts";
 import { DistrictSearchBox } from "@/widgets/search-district";
 import { FavoriteList } from "@/widgets/favorite";
 
-// TODO: 검색창 닫기 만들기 onBLow?
 function HomePage() {
   const { location } = useCurrentLocation();
 
