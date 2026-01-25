@@ -1,6 +1,12 @@
 ## 프로젝트 실행 방법
 
 ```bash
+# 프로젝트 복제
+git clone https://github.com/PixeIDark/realteeth.git
+
+# 프로젝트 폴더로 이동
+cd realteeth
+
 # 환경변수 설정
 echo "VITE_WEATHER_API_KEY=d33ab40b3960dfc03940f52d11142cbb" > .env
 
