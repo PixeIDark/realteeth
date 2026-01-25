@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import type { FavoriteItem } from "@/entities/favorite";
 import { favoriteKeys } from "@/entities/favorite/model/keys.ts";
+import { toast } from "sonner";
 
 const MAX_COUNT = 6;
 const STORAGE_KEY = "weather-favorites";
@@ -43,7 +44,7 @@ export function useFavorites() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: favoriteKeys.all }),
-    onError: (error) => alert(error.message),
+    onError: (error) => toast.error(error.message),
   });
 
   const removeFavorite = useMutation({
