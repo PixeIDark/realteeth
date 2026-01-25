@@ -11,6 +11,7 @@ function LocationPermissionPrompt() {
           <br />
           위치 접근 권한을 허용해주세요.
         </p>
+        <p className="text-muted-foreground text-xs">권한을 거부하면 서울 날씨가 표시됩니다.</p>
       </div>
     </div>
   );
