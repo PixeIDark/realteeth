@@ -8,9 +8,10 @@ import ErrorCard from "@/shared/ui/ErrorCard.tsx";
 interface WeatherCardProps {
   lat: number;
   lon: number;
+  locationName?: string;
 }
 
-function WeatherCard({ lat, lon }: WeatherCardProps) {
+function WeatherCard({ lat, lon, locationName }: WeatherCardProps) {
   const { data: weather, isLoading, isError } = useCurrentWeather(lat, lon);
 
   if (isLoading) {
@@ -34,7 +35,7 @@ function WeatherCard({ lat, lon }: WeatherCardProps) {
             <MapPin className="text-muted-foreground h-5 w-5 sm:h-6 sm:w-6" />
             <div>
               <p className="text-muted-foreground text-xs sm:text-sm">도시</p>
-              <p className="text-sm font-semibold sm:text-lg">{weather.name}</p>
+              <p className="text-sm font-semibold sm:text-lg">{locationName ?? weather.name}</p>
             </div>
           </div>
 
