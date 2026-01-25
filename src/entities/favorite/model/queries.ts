@@ -14,6 +14,8 @@ export function useFavorites() {
       const stored = localStorage.getItem(STORAGE_KEY);
       return (stored ? JSON.parse(stored) : []) as FavoriteItem[];
     },
+    staleTime: Infinity,
+    gcTime: Infinity,
   });
 
   const addFavorite = useMutation({
