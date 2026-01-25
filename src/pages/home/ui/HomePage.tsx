@@ -1,21 +1,15 @@
-import { HourlyForecastCard, WeatherCard } from "@/features/weather";
 import { useCurrentLocation } from "@/shared/lib/useCurrentLocation.ts";
 import { DistrictSearchBox } from "@/widgets/search-district";
 import { FavoriteList } from "@/widgets/favorite";
-import { PageLoader } from "@/shared/ui/PageLoader.tsx";
+import CurrentLocationWeather from "@/pages/home/ui/CurrentLocationWeather.tsx";
 
 function HomePage() {
-  const { location, isLoading } = useCurrentLocation();
-
-  if (isLoading) {
-    return <PageLoader message="현재 위치 탐색중..." />;
-  }
+  const { location, isLoading, isPending } = useCurrentLocation();
 
   return (
     <div className="flex flex-col gap-6 sm:gap-8">
       <DistrictSearchBox />
-      <WeatherCard lat={location.lat} lon={location.lon} />
-      <HourlyForecastCard lat={location.lat} lon={location.lon} />
+      <CurrentLocationWeather location={location} isPending={isPending} isLoading={isLoading} />
       <FavoriteList />
     </div>
   );

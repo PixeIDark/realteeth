@@ -5,32 +5,42 @@ interface Location {
   lon: number;
 }
 
+type LocationStatus = "idle" | "pending" | "loading" | "success";
+
 const DEFAULT_LOCATION: Location = { lat: 37.5665, lon: 126.978 };
 const hasGeolocation = typeof navigator !== "undefined" && !!navigator.geolocation;
-const initialLocation = hasGeolocation ? null : DEFAULT_LOCATION;
 
 export function useCurrentLocation() {
-  const [location, setLocation] = useState<Location | null>(initialLocation);
-  const [isLoading, setIsLoading] = useState(hasGeolocation);
+  const [location, setLocation] = useState<Location | null>(hasGeolocation ? null : DEFAULT_LOCATION);
+  const [status, setStatus] = useState<LocationStatus>(hasGeolocation ? "idle" : "success");
 
   useEffect(() => {
     if (!hasGeolocation) return;
 
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setLocation({
-          lat: position.coords.latitude,
-          lon: position.coords.longitude,
-        });
-        setIsLoading(false);
-      },
-      (error) => {
-        console.warn("위치 획득 실패, 기본값 사용:", error.message);
-        setLocation(DEFAULT_LOCATION);
-        setIsLoading(false);
-      }
-    );
+    navigator.permissions.query({ name: "geolocation" }).then((result) => {
+      const isPrompt = result.state === "prompt";
+      setStatus(isPrompt ? "pending" : "loading");
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setLocation({
+            lat: position.coords.latitude,
+            lon: position.coords.longitude,
+          });
+          setStatus("success");
+        },
+        (error) => {
+          console.warn("위치 획득 실패, 기본값 사용:", error.message);
+          setLocation(DEFAULT_LOCATION);
+          setStatus("success");
+        }
+      );
+    });
   }, []);
 
-  return { location: location as Location, isLoading };
+  return {
+    location: location as Location,
+    isPending: status === "pending",
+    isLoading: status === "idle" || status === "loading",
+  };
 }

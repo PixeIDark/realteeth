@@ -33,14 +33,11 @@ function HourlyForecastCard({ lat, lon }: HourlyForecastCardProps) {
           {forecast.map((item) => (
             <div
               key={item.id}
-              // min-w를 w-로 바꾸고, shrink-0을 추가해 압축되지 않게 합니다.
               className="bg-muted/50 flex w-[100px] shrink-0 flex-col items-center gap-2 rounded-lg p-3 sm:w-[120px] sm:p-4"
             >
               <p className="text-muted-foreground text-xs">{item.date}</p>
               <p className="text-sm font-medium">{item.time}</p>
               <p className="text-lg font-bold sm:text-xl">{item.temp}</p>
-
-              {/* 설명 부분: 높이를 고정하거나 텍스트 정렬 처리 */}
               <p className="text-muted-foreground line-clamp-2 min-h-[2rem] text-center text-[10px] leading-tight sm:text-xs">
                 {item.description}
               </p>
