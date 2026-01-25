@@ -8,7 +8,6 @@ function PlaceNotFound() {
         <CardContent className="flex flex-col items-center gap-4 pt-6">
           <AlertCircle className="text-destructive h-10 w-10" />
           <p className="text-muted-foreground text-center text-sm">해당 장소의 정보가 제공되지 않습니다.</p>
-          <PlaceNotFound />
         </CardContent>
       </Card>
     </div>
