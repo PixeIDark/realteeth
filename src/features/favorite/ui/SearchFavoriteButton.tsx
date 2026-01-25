@@ -7,7 +7,7 @@ interface FavoriteButtonProps {
   district: District;
 }
 
-function FavoriteButton({ district }: FavoriteButtonProps) {
+function SearchFavoriteButton({ district }: FavoriteButtonProps) {
   const { addFavorite, removeFavorite, getFavoriteItem } = useFavorites();
   const favoriteItem = getFavoriteItem(district?.id);
 
@@ -25,20 +25,10 @@ function FavoriteButton({ district }: FavoriteButtonProps) {
   };
 
   return (
-    <Button variant={favoriteItem ? "outline" : "default"} onClick={handleToggleFavorite} className="w-full sm:w-auto">
-      {favoriteItem ? (
-        <>
-          <StarOff className="mr-2 h-4 w-4" />
-          <p>즐겨찾기 해제</p>
-        </>
-      ) : (
-        <>
-          <Star className="mr-2 h-4 w-4" />
-          <p>즐겨찾기 추가</p>
-        </>
-      )}
+    <Button variant={favoriteItem ? "outline" : "default"} onClick={handleToggleFavorite}>
+      {favoriteItem ? <StarOff className="h-4 w-4" /> : <Star className="h-4 w-4" />}
     </Button>
   );
 }
 
-export default FavoriteButton;
+export default SearchFavoriteButton;
