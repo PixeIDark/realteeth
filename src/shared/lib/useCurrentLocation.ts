@@ -6,16 +6,12 @@ interface Location {
 }
 
 const DEFAULT_LOCATION: Location = { lat: 37.5665, lon: 126.978 };
-
 const hasGeolocation = typeof navigator !== "undefined" && !!navigator.geolocation;
+const initialLocation = hasGeolocation ? null : DEFAULT_LOCATION;
 
 export function useCurrentLocation() {
-  const [location, setLocation] = useState<Location | null>(null);
+  const [location, setLocation] = useState<Location | null>(initialLocation);
   const [isLoading, setIsLoading] = useState(hasGeolocation);
-
-  if (hasGeolocation) {
-    setLocation(DEFAULT_LOCATION);
-  }
 
   useEffect(() => {
     if (!hasGeolocation) return;
