@@ -21,11 +21,13 @@ export function useFavorites() {
       const current = [...favorites];
 
       if (current.length >= MAX_COUNT) {
-        throw new Error(`즐겨찾기는 최대 ${MAX_COUNT}개까지만 가능합니다.`);
+        alert(`즐겨찾기는 최대 ${MAX_COUNT}개까지만 가능합니다.`);
+        return;
       }
 
       if (current.some((f) => f.districtId === district.id)) {
-        throw new Error("이미 추가된 장소입니다.");
+        alert("이미 추가된 장소입니다.");
+        return;
       }
 
       const next = [
@@ -41,7 +43,6 @@ export function useFavorites() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: favoriteKeys.all }),
-    onError: (error: Error) => alert(error.message),
   });
 
   const removeFavorite = useMutation({
