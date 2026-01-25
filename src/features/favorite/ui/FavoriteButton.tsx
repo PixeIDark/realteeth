@@ -5,13 +5,16 @@ import { useFavorites } from "@/entities/favorite";
 
 interface FavoriteButtonProps {
   district: District;
+  showLabel?: boolean;
+  className?: string;
 }
 
-function FavoriteButton({ district }: FavoriteButtonProps) {
+function FavoriteButton({ district, showLabel = true, className }: FavoriteButtonProps) {
   const { addFavorite, removeFavorite, getFavoriteItem } = useFavorites();
   const favoriteItem = getFavoriteItem(district?.id);
 
-  const handleToggleFavorite = () => {
+  const handleToggleFavorite = (e: React.MouseEvent) => {
+    e.stopPropagation();
     if (favoriteItem) {
       removeFavorite(favoriteItem.id);
     } else {
@@ -24,19 +27,13 @@ function FavoriteButton({ district }: FavoriteButtonProps) {
     }
   };
 
+  const Icon = favoriteItem ? StarOff : Star;
+  const label = favoriteItem ? "즐겨찾기 해제" : "즐겨찾기 추가";
+
   return (
-    <Button variant={favoriteItem ? "outline" : "default"} onClick={handleToggleFavorite} className="w-full sm:w-auto">
-      {favoriteItem ? (
-        <>
-          <StarOff className="mr-2 h-4 w-4" />
-          <p>즐겨찾기 해제</p>
-        </>
-      ) : (
-        <>
-          <Star className="mr-2 h-4 w-4" />
-          <p>즐겨찾기 추가</p>
-        </>
-      )}
+    <Button variant={favoriteItem ? "outline" : "default"} onClick={handleToggleFavorite} className={className}>
+      <Icon className={showLabel ? "mr-2 h-4 w-4" : "h-4 w-4"} />
+      {showLabel && <span>{label}</span>}
     </Button>
   );
 }

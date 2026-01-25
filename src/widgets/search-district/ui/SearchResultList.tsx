@@ -1,9 +1,9 @@
 import { useEffect, useRef } from "react";
 import { Card } from "@/shared/ui/Card.tsx";
 import { MapPin } from "lucide-react";
-import { SearchFavoriteButton } from "@/features/favorite";
 import ErrorCard from "@/shared/ui/ErrorCard.tsx";
 import type { District } from "@/entities/district/model/type.ts";
+import { FavoriteButton } from "@/features/favorite";
 
 interface SearchResultListProps {
   results: District[];
@@ -53,7 +53,7 @@ function SearchResultList({ results, focusIndex, isResults, query, onSelect }: S
               <MapPin className="text-muted-foreground h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
               <span className="truncate text-sm sm:text-base">{district.fullName}</span>
             </button>
-            <SearchFavoriteButton district={district} />
+            <FavoriteButton district={district} showLabel={false} />
           </li>
         ))}
       </ul>
