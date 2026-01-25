@@ -14,7 +14,7 @@ function DetailPage() {
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 sm:gap-8">
       <DetailHeaderActions district={district} />
       <WeatherCard lat={district.lat} lon={district.lon} locationName={district.fullName} />
       <HourlyForecastCard lat={district.lat} lon={district.lon} />
