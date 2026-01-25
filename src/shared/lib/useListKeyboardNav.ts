@@ -17,7 +17,7 @@ export function useListKeyboardNav<T>({
 }: UseListKeyboardNavOptions<T>) {
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
-      if (items.length === 0) return;
+      if (e.nativeEvent.isComposing || items.length === 0) return;
 
       const actions: Record<string, () => void> = {
         ArrowDown: () => {

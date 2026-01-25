@@ -9,7 +9,13 @@ interface SearchInputProps {
   placeholder?: string;
 }
 
-function SearchInput({ value, onChange, onKeyDown, placeholder = "장소 검색 (시, 구, 동)" }: SearchInputProps) {
+function SearchInput({
+  value,
+  onChange,
+  onKeyDown,
+  onFocus,
+  placeholder = "장소 검색 (시, 구, 동)",
+}: SearchInputProps) {
   return (
     <div className="relative">
       <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 sm:h-5 sm:w-5" />
@@ -18,6 +24,7 @@ function SearchInput({ value, onChange, onKeyDown, placeholder = "장소 검색 
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={onKeyDown}
+        onFocus={onFocus}
         placeholder={placeholder}
         className="h-10 pl-9 text-sm sm:h-12 sm:pl-11 sm:text-base"
       />
