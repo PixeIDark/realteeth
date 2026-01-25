@@ -2,14 +2,14 @@ import { Button } from "@/shared/ui/Button.tsx";
 import { Star, StarOff } from "lucide-react";
 import type { District } from "@/entities/district/model/type.ts";
 import { useFavorites } from "@/entities/favorite";
+import type { ComponentProps } from "react";
 
-interface FavoriteButtonProps {
+interface FavoriteButtonProps extends ComponentProps<typeof Button> {
   district: District;
   showLabel?: boolean;
-  className?: string;
 }
 
-function FavoriteButton({ district, showLabel = true, className }: FavoriteButtonProps) {
+function FavoriteButton({ district, showLabel = true, ...props }: FavoriteButtonProps) {
   const { addFavorite, removeFavorite, getFavoriteItem } = useFavorites();
   const favoriteItem = getFavoriteItem(district?.id);
 
@@ -31,7 +31,7 @@ function FavoriteButton({ district, showLabel = true, className }: FavoriteButto
   const label = favoriteItem ? "즐겨찾기 해제" : "즐겨찾기 추가";
 
   return (
-    <Button variant={favoriteItem ? "outline" : "default"} onClick={handleToggleFavorite} className={className}>
+    <Button variant={favoriteItem ? "outline" : "default"} onClick={handleToggleFavorite} {...props}>
       <Icon className={showLabel ? "mr-2 h-4 w-4" : "h-4 w-4"} />
       {showLabel && <span>{label}</span>}
     </Button>
