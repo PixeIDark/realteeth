@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { LINKS } from "@/app/routes/route";
 import { useDistrictSearch } from "@/features/search-district";
@@ -12,17 +12,14 @@ function DistrictSearchBox() {
   const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
-  const { query, setQuery, searchResults, isResults, focusIndex, setFocusIndex, clearSearch } = useDistrictSearch();
+  const { query, setQuery, searchResults, focusIndex, setFocusIndex, clearSearch } = useDistrictSearch();
   useOnClickOutside(containerRef, () => setIsOpen(false));
 
-  const handleSelect = useCallback(
-    (district: District) => {
-      navigate(LINKS.DETAIL(district.id));
-      clearSearch();
-      setIsOpen(false);
-    },
-    [navigate, clearSearch]
-  );
+  const handleSelect = (district: District) => {
+    navigate(LINKS.DETAIL(district.id));
+    clearSearch();
+    setIsOpen(false);
+  };
 
   const { handleKeyDown } = useListKeyboardNav({
     items: searchResults,
@@ -35,25 +32,20 @@ function DistrictSearchBox() {
     },
   });
 
+  const handleChange = (val: string) => {
+    setQuery(val);
+    setIsOpen(true);
+  };
+
+  const handleOpen = () => {
+    setIsOpen(true);
+  };
+
   return (
     <div className="relative" ref={containerRef}>
-      <SearchInput
-        value={query}
-        onChange={(val) => {
-          setQuery(val);
-          setIsOpen(true);
-        }}
-        onFocus={() => setIsOpen(true)}
-        onKeyDown={handleKeyDown}
-      />
+      <SearchInput value={query} onChange={handleChange} onFocus={handleOpen} onKeyDown={handleKeyDown} />
       {isOpen && (
-        <SearchResultList
-          results={searchResults}
-          focusIndex={focusIndex}
-          isResults={isResults}
-          query={query}
-          onSelect={handleSelect}
-        />
+        <SearchResultList results={searchResults} focusIndex={focusIndex} query={query} onSelect={handleSelect} />
       )}
     </div>
   );

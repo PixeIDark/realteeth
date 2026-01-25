@@ -8,12 +8,11 @@ import { FavoriteButton } from "@/features/favorite";
 interface SearchResultListProps {
   results: District[];
   focusIndex: number;
-  isResults: boolean;
   query: string;
   onSelect: (district: District) => void;
 }
 
-function SearchResultList({ results, focusIndex, isResults, query, onSelect }: SearchResultListProps) {
+function SearchResultList({ results, focusIndex, query, onSelect }: SearchResultListProps) {
   const listRef = useRef<HTMLUListElement>(null);
   const itemRefs = useRef<(HTMLLIElement | null)[]>([]);
 
@@ -26,13 +25,11 @@ function SearchResultList({ results, focusIndex, isResults, query, onSelect }: S
     }
   }, [focusIndex]);
 
-  if (isResults && query.trim()) {
+  if (results.length === 0 && query.trim()) {
     return <ErrorCard message="해당 장소의 정보가 제공되지 않습니다." />;
   }
 
-  if (results.length === 0) {
-    return null;
-  }
+  if (results.length === 0) return null;
 
   return (
     <Card className="absolute z-20 mt-1 w-full overflow-hidden">
