@@ -12,7 +12,7 @@ interface UseDistrictSearchReturn {
   query: string;
   setQuery: (value: string) => void;
   searchResults: District[];
-  noResults: boolean;
+  isResults: boolean;
   focusIndex: number;
   setFocusIndex: React.Dispatch<React.SetStateAction<number>>;
   clearSearch: () => void;
@@ -23,21 +23,21 @@ export function useDistrictSearch(options: UseDistrictSearchOptions = {}): UseDi
   const { data: districts } = useDistricts();
   const [query, setQuery] = useState("");
   const [searchResults, setSearchResults] = useState<District[]>([]);
-  const [noResults, setNoResults] = useState(false);
+  const [isResults, setIsResults] = useState(false);
   const [focusIndex, setFocusIndex] = useState(-1);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       if (!query.trim()) {
         setSearchResults([]);
-        setNoResults(false);
+        setIsResults(false);
         setFocusIndex(-1);
         return;
       }
 
       const filtered = filterDistricts(districts, query, maxResults);
       setSearchResults(filtered);
-      setNoResults(filtered.length === 0);
+      setIsResults(filtered.length === 0);
       setFocusIndex(-1);
     }, debounceMs);
 
@@ -47,7 +47,7 @@ export function useDistrictSearch(options: UseDistrictSearchOptions = {}): UseDi
   const clearSearch = useCallback(() => {
     setQuery("");
     setSearchResults([]);
-    setNoResults(false);
+    setIsResults(false);
     setFocusIndex(-1);
   }, []);
 
@@ -55,7 +55,7 @@ export function useDistrictSearch(options: UseDistrictSearchOptions = {}): UseDi
     query,
     setQuery,
     searchResults,
-    noResults,
+    isResults,
     focusIndex,
     setFocusIndex,
     clearSearch,

@@ -7,13 +7,13 @@ import type { District } from "@/entities/district/model/type.ts";
 interface SearchResultListProps {
   results: District[];
   focusIndex: number;
-  noResults: boolean;
+  isResults: boolean;
   query: string;
   onSelect: (district: District) => void;
 }
 
-function SearchResultList({ results, focusIndex, noResults, query, onSelect }: SearchResultListProps) {
-  if (noResults && query.trim()) {
+function SearchResultList({ results, focusIndex, isResults, query, onSelect }: SearchResultListProps) {
+  if (isResults && query.trim()) {
     return <ErrorCard message="해당 장소의 정보가 제공되지 않습니다." />;
   }
 

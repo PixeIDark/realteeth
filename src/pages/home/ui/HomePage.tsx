@@ -3,8 +3,7 @@ import { useCurrentLocation } from "@/shared/lib/useCurrentLocation.ts";
 import { DistrictSearchBox } from "@/widgets/search-district";
 import { FavoriteList } from "@/widgets/favorite";
 
-// TODO: 검색드롭다운에서 모바일일때 즐겨찾기 커지는거 대처하기, 검색창 닫기 만들기 onBLow?
-// TODO: 시간대별 기후 박스 크기 1.
+// TODO: 검색창 닫기 만들기 onBLow?
 function HomePage() {
   const { location } = useCurrentLocation();
 
