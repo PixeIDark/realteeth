@@ -1,4 +1,4 @@
-import Header from "@/widgets/header/ui/Header.tsx";
+import Header from "@/shared/ui/Header.tsx";
 import { Outlet } from "react-router";
 
 function RootLayout() {
