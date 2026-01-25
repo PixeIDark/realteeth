@@ -12,8 +12,6 @@ export function useCurrentLocation() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!navigator.geolocation) return;
-
     navigator.geolocation.getCurrentPosition(
       (position) => {
         setLocation({
