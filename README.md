@@ -95,7 +95,6 @@ pnpm dev
   불가([참고](https://amanexplains.com/error-boundary-react-query-and-router-v6/))
 - useQuery의 isLoading, isError로 컴포넌트 내부에서 직접 분기 처리
 - 한 API 실패 시 해당 컴포넌트만 에러 UI 표시
--
 
 **useSuspenseQuery 선택적 사용**
 
@@ -104,7 +103,7 @@ pnpm dev
 
 ## 사용한 기술 스택
 
-- React 19
+- React 18
 - TypeScript
 - React Router 7
 - TanStack Query
