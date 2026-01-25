@@ -18,13 +18,14 @@ pnpm dev
 **홈 페이지 ("/")**
 
 - 현재 위치 기반 날씨 정보 자동 표시
+- 시간대별 기온 예보 표시
 - 지역 검색을 통한 상세 페이지 이동
 - 즐겨찾기 목록 표시 및 관리
 
 **상세 페이지 ("/detail/:locationId")**
 
 - 선택한 지역의 현재 날씨 정보 표시
-- 시간대별 기온 예보 제공
+- 시간대별 기온 예보 표시
 - 즐겨찾기 추가/해제 기능
 
 ### 주요 기능
@@ -81,6 +82,19 @@ pnpm dev
 - 트리 쉐이킹 지원으로 사용한 아이콘만 번들에 포함
 - 일관된 디자인의 아이콘 제공
 - 개발 생산성 향상
+
+**useQuery 상태 기반 에러 처리**
+
+- React Router의 RouterProvider가 내부 ErrorBoundary를 가지고 있어 컴포넌트별 에러 처리
+  불가([참고](https://amanexplains.com/error-boundary-react-query-and-router-v6/))
+- useQuery의 isLoading, isError로 컴포넌트 내부에서 직접 분기 처리
+- 한 API 실패 시 해당 컴포넌트만 에러 UI 표시
+-
+
+**useSuspenseQuery 선택적 사용**
+
+- 로컬 데이터(지역 JSON, localStorage)는 실패 가능성이 없어 useSuspenseQuery 사용
+- data 타입에서 undefined 제거로 타입 안전성 확보
 
 ## 사용한 기술 스택
 
